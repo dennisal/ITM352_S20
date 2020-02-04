@@ -9,9 +9,9 @@ ul {
 li {
     display: inline;
 }
-#Navbar a {
-    margin-left: 70px;
-    margin-right: 70px;
+#Navbar a{
+    margin-left: 50px;
+    margin-right: 50px;
 }
 body {
     font-family: 'Open+Sans', sans-serif;
