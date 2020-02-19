@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    Hello!<br>
+    <div id="ageDiv"></div>
+    <br>
+    <b>
+        <div id="myname"></div>
+    </b>
+    <br>
+    <i>
+        <div id="mymiddlename"></div>
+    </i>
+    <br>
+    <h1>
+        <div id="mylastname"></div>
+    </h1>
+    <br>
+    <div id="initials"></div>
+    <script>
+        document.getElementById("ageDiv").innerHTML = (20 * 12 + 7) / 12;
+        var myname = "Lexy";
+        var mymiddlename = "Taylor";
+        var mylastname = "Dennis";
+        var firstinitial = myname.slice(0, 1);
+        var lastinitial = mylastname.slice(0, 1);
+        var fullname = myname + ' ' + mymiddlename + ' ' + mylastname;
+        var initials = firstinitial + '.' + lastinitial + '.';
+        document.getElementById("myname").innerHTML = myname;
+        document.getElementById("mymiddlename").innerHTML = mymiddlename;
+        document.getElementById("mylastname").innerHTML = mylastname;
+        document.getElementById("initials").innerHTML = initials;
+    </script>
+</body>
+
+</html>
