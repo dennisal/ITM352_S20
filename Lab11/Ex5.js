@@ -1,7 +1,15 @@
 attributes = "Lexy;20;20.5;-19.5";
 var pieces = attributes.split(';');
 for (i = 0; i < pieces.length; i++) {
-    console.log(pieces[i], typeof pieces[i], isNonNegInt(pieces[i], true));
+}
+
+pieces.forEach(printIt)
+pieces.forEach(
+    function () { console.log( (typeof item == 'string' && item.length > 0)?true:false );}
+);
+
+function printIt(item, index) {
+    console.log(item, typeof item, isNonNegInt(item, true));
 }
 
 function isNonNegInt(q,returnErrors = false) {
