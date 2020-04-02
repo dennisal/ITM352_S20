@@ -5,24 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-</head>
-
-<body>
     <script>
-        let params = (new URL(document.location)).searchParams;
-        GET = {};
-        params.forEach(function (value, key) { GET[key] = value });
-
-        if (typeof GET['quantity_textbox'] != 'undefined') {
-            qty = GET["quantity_textbox"];
-            console.log(qty);
-            if (isNonNegInt(qty, false)) {
-                document.write(`Thank for you for ordering ${qty} things!`);
-            } else {
-                purchase_button_message.innerHTML = "Please enter a valid quantity before purchase";
-            }
-        }
-
         function checkQuantityTextbox(theTextbox) {
             var errs = isNonNegInt(theTextbox.value, true);
             qty_textbox_message.innerHTML = errs.join(",");
@@ -37,10 +20,28 @@
             }
             return returnErrors ? errors : (errors.length == 0);
         }
+    </script>
+</head>
+
+<body>
+    <script>
+        let params = (new URL(document.location)).searchParams;
+        GET = {};
+        params.forEach(function (value, key) { GET[key] = value });
+
+        if (typeof GET['quantity_textbox'] != 'undefined') {
+            qty = GET["quantity_textbox"];
+            console.log(qty);
+            if (isNonNegInt(qty, false)) {
+                document.write(`Thank for you for ordering ${qty} things!`);
+                window.stop();
+            } else {
+            }
+        }
 
     </script>
-    <form name="quantity_form" action="order_page.html" method="GET">
-        Quantity desired: <input name="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(quantity_textbox)">
+    <form name="quantity_form" action="order_page.html" method="POST">
+        Quantity desired: <input name="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(quantity_textbox);">
         <span id='qty_textbox_message'>Enter a quantity</span>
         <br>
         <input type="submit" value="Purchase">
@@ -49,3 +50,8 @@
 </body>
 
 </html>
+<script>
+    if (typeof GET['quantity_textbox'] != 'undefined') {
+        quantity_form['quantity_textbox'].value = qty;
+    }
+</script>
