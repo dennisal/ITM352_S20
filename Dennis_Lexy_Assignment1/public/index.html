@@ -5,121 +5,143 @@
 	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
 -->
 <html>
-	<head>
-		<title>Spanish City Tours</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-	</head>
-	<body>
 
-		<!-- Header -->
-			<header id="header" class="alt">
-				<div class="inner">
-					<h1>Spanish City Tours</h1>
-					<p>A free responsive site template by <a href="https://templated.co">TEMPLATED</a></p>
-				</div>
-			</header>
+<head>
+    <script src="/templated-epilogue/assets/js/jquery.min.js"></script>
+    <script src="/templated-epilogue/assets/js/skel.min.js"></script>
+    <script src="/templated-epilogue/assets/js/util.js"></script>
+    <script src="/templated-epilogue/assets/js/main.js"></script>
+    <title>Spanish City Tours</title>
+    <script>
+        function select_quantity() {
+            dropdown_list = document.getElementById(dropdown_list);
+            document.getElementById("selectquantity").value = dropdown_list.options(dropdown_list.selectedIndex).text;
+        }
+        function create_article(image, tour, description) {
+            var str = `
+            <article class="item">
+                <header>
+                    <a><img src="${image}" alt="" /></a>
+                    <h3>${tour}</h3>
+                </header>
+                    <p>${description}</p>
 
-		<!-- Wrapper -->
-			<div id="wrapper">
+                <!--Dropdown menu to select quantities-->
+                        <select>
+                        <option>Select Quantity</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                </select>
+                    
+                
+            </article>`;
+            return str;
+        }
 
-				<!-- Banner -->
-					<section id="intro" class="main">
-						<span class="icon fa-diamond major"></span>
-						<h2>Magna porta maximus</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae<br />
-						malesuada turpis. Nam pellentesque in ac aliquam. Aliquam tempor<br />
-						mi porta egestas maximus lorem ipsum dolor.</p>
-						<ul class="actions">
-							<li><a href="#" class="button big">Learn More</a></li>
-						</ul>
-					</section>
+        let url = './services_data.json';
 
-				<!-- Items -->
-					<section class="main items">
-						<article class="item">
-							<header>
-								<a href="#"><img src="images/pic01.jpg" alt="" /></a>
-								<h3>Feugiat et faucibus</h3>
-							</header>
-							<p>Fusce malesuada efficitur venenatis. Pellentesque tempor leo sed massa hendrerit hendrerit. In sed feugiat est, eu congue elit. Ut porta magna vel felis sodales vulputate. Donec faucibus dapibus lacus non ornare.</p>
-							<ul class="actions">
-								<li><a href="#" class="button">More</a></li>
-							</ul>
-						</article>
-						<article class="item">
-							<header>
-								<a href="#"><img src="images/pic02.jpg" alt="" /></a>
-								<h3>Blandit adipiscing</h3>
-							</header>
-							<p>Fusce malesuada efficitur venenatis. Pellentesque tempor leo sed massa hendrerit hendrerit. In sed feugiat est, eu congue elit. Ut porta magna vel felis sodales vulputate. Donec faucibus dapibus lacus non ornare.</p>
-							<ul class="actions">
-								<li><a href="#" class="button">More</a></li>
-							</ul>
-						</article>
-						<article class="item">
-							<header>
-								<a href="#"><img src="images/pic03.jpg" alt="" /></a>
-								<h3>Lorem massa nulla</h3>
-							</header>
-							<p>Fusce malesuada efficitur venenatis. Pellentesque tempor leo sed massa hendrerit hendrerit. In sed feugiat est, eu congue elit. Ut porta magna vel felis sodales vulputate. Donec faucibus dapibus lacus non ornare.</p>
-							<ul class="actions">
-								<li><a href="#" class="button">More</a></li>
-							</ul>
-						</article>
-						<article class="item">
-							<header>
-								<a href="#"><img src="images/pic04.jpg" alt="" /></a>
-								<h3>Ipsum sed tempus</h3>
-							</header>
-							<p>Fusce malesuada efficitur venenatis. Pellentesque tempor leo sed massa hendrerit hendrerit. In sed feugiat est, eu congue elit. Ut porta magna vel felis sodales vulputate. Donec faucibus dapibus lacus non ornare.</p>
-							<ul class="actions">
-								<li><a href="#" class="button">More</a></li>
-							</ul>
-						</article>
-					</section>
+        var services_array = [];
+        window.onload = function () {
+            // use fetch to retrieve it, and report any errors that occur in the fetch operation
+            // once the products have been successfully loaded and formatted as a JSON object
+            // using response.json(), run the initialize() function
+            fetch(url).then(function (response) {
+                if (response.ok) {
+                    response.json().then(function (json) {
+                        services_array = json;
+                        //writing the articles into the tour section
 
-				<!-- CTA -->
-					<section id="cta" class="main special">
-						<h2>Etiam veroeros lorem</h2>
-						<p>Phasellus ac augue ac magna auctor tempus proin<br />
-						accumsan lacus a nibh commodo in pellentesque dui<br />
-						in hac habitasse platea dictumst.</p>
-						<ul class="actions">
-							<li><a href="#" class="button big">Get Started</a></li>
-						</ul>
-					</section>
+                        for (i = 0; i < services_array.length; i++) {
+                            tour_section.innerHTML += create_article(services_array[i].image, services_array[i].tour, services_array[i].description);
+                        }
+                    });
+                } else {
+                    console.log('Network request for products.json failed with response ' + response.status + ': ' + response.statusText);
+                }
+            }); 
+        }
 
-				<!-- Main -->
-				<!--
-					<section id="main" class="main">
-						<header>
-							<h2>Lorem ipsum dolor</h2>
-						</header>
-						<p>Fusce malesuada efficitur venenatis. Pellentesque tempor leo sed massa hendrerit hendrerit. In sed feugiat est, eu congue elit. Ut porta magna vel felis sodales vulputate. Donec faucibus dapibus lacus non ornare. Etiam eget neque id metus gravida tristique ac quis erat. Aenean quis aliquet sem. Ut ut elementum sem. Suspendisse eleifend ut est non dapibus. Nulla porta, neque quis pretium sagittis, tortor lacus elementum metus, in imperdiet ante lorem vitae ipsum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam eget neque id metus gravida tristique ac quis erat. Aenean quis aliquet sem. Ut ut elementum sem. Suspendisse eleifend ut est non dapibus. Nulla porta, neque quis pretium sagittis, tortor lacus elementum metus, in imperdiet ante lorem vitae ipsum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-					</section>
-				-->
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/templated-epilogue/assets/css/main.css" />
+</head>
 
-				<!-- Footer -->
-					<footer id="footer">
-						<ul class="icons">
-							<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>
-							<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<p class="copyright">&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.</p>
-					</footer>
+<body>
 
-			</div>
+    <!-- Header -->
+    <header id="header" class="alt">
+        <div class="inner">
+            <h1>Spanish City Tours</h1>
+            <p>Day Tours in Spain's 5 Most Exciting Cities</p>
+        </div>
+    </header>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/skel.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+    <!-- Makes tour items look like they're on top of a background -->
+    <div id="wrapper">
+        <!-- Tours -->
+        <section class="tour options" id="tour_section">
 
-	</body>
+        </section>
+
+        <!-- CTA Calculating invoice for purchased tours -->
+
+
+        <section id="cta" class="main special">
+            <h2>Etiam veroeros lorem</h2>
+            <p>Phasellus ac augue ac magna auctor tempus proin<br />
+                accumsan lacus a nibh commodo in pellentesque dui<br />
+                in hac habitasse platea dictumst.</p>
+            <form name='quantity_form' action="http://localhost:8080/process_form" method="POST">
+                <script>
+                    for (i; i < services_array.length; i++) {
+                        document.write(`<h3>${services_array[i].tour} at \$${services_array[i].price}</h3>`);
+                        document.write(`
+                            <label for="quantity_textbox">quantity desired:</label>
+                            <input type="text" name="quantity_textbox${i}" onkeyup="checkQuantityTextbox(this);">
+                            <span id="quantity_textbox${i}_message">Enter a quantity</span>
+                            `);
+                    }
+                </script>
+                <br>
+                <!-- Purchase button that will redirect to the invoice page -->
+                <ul class="actions">
+                    <input type="submit" value='Purchase' class="button big" name="purchase_submit_button">
+                </ul>
+            </form>
+        </section>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+                <li><a href="#" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>
+                <li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+            </ul>
+            <p class="copyright">&copy; Untitled. Design:
+                <a href="https://templated.co">TEMPLATED</a>.
+                Images:
+                <a href="https://idealista.com">Idealista</a>,
+                <!-- Madrid image -->
+                <a href="https://insider.com">Insider</a>,
+                <!-- Seville image -->
+                <a href="https://www.roadaffair.com">Road Affair</a>,
+                <!-- Granada image -->
+                <a href="https://www.veltra.com/en/">Veltra</a>.</p> <!-- Valencia image -->
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+
+
+</body>
+
 </html>

@@ -1,13 +1,11 @@
 /* 
 Copied from info_server_Ex4.js from Lab13
 */
-
 var express = require('express');
 var app = express();
 var myParser = require("body-parser");
 var fs = require('fs');
-var data = require('./public/product_data.js');
-var products = data.products;
+var services = require('./public/services_data.json');
 
 
 app.all('*', function (request, response, next) {
@@ -63,7 +61,5 @@ function process_quantity_form (POST, response) {
     }
  }
  
-
-
 app.use(express.static('./public'));
 app.listen(8080, () => console.log(`listening on port 8080`));

@@ -1,0 +1,1 @@
+<h2>Thank you for purchasing ${q} ${tour}. Your total is \$${q * tour_price}!</h2>
