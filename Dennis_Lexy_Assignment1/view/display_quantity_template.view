@@ -1,1 +1,1 @@
-<h2>Thank you for purchasing ${q} ${tour}. Your total is \$${q * tour_price}!</h2>
+<h2>Thank you for purchasing ${selectedValue[i]} ${services_array[i].tour}. Your total is \$${selectedValue * services_array.tour * services_array.price}!</h2>
