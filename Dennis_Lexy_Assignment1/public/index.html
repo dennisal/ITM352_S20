@@ -12,54 +12,6 @@
     <script src="/templated-epilogue/assets/js/util.js"></script>
     <script src="/templated-epilogue/assets/js/main.js"></script>
     <title>Spanish City Tours</title>
-    <script>
-        // function that inputs the image, tour, and description for each article item
-        function create_article(image, tour, description) {
-            var str = `
-            <article class="item">
-                <header>
-                    <a><img src="${image}" alt="" /></a>
-                    <h3>${tour}</h3>
-                </header>
-                    <p>${description}</p>
-
-                <!--Dropdown menu to select quantities-->
-                <select id="dropdown_list" onchange="getSelectedValue();">
-                    <option value="0">Select Quantity</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                </select>
-
-            </article>`;
-            return str;
-        }
-
-        let url = './services_data.json';
-        var services_array = [];
-        window.onload = function () {
-            // use fetch to retrieve it, and report any errors that occur in the fetch operation
-            // once the products have been successfully loaded and formatted as a JSON object
-            // using response.json(), run the initialize() function
-            fetch(url).then(function (response) {
-                if (response.ok) {
-                    response.json().then(function (json) {
-                        services_array = json;
-                        for (i = 0; i < services_array.length; i++) { //writing the articles into the tour section
-                            tour_section.innerHTML += create_article(services_array[i].image, services_array[i].tour, services_array[i].description);
-                        }
-                    });
-                } else {
-                    console.log('Network request for products.json failed with response ' + response.status + ': ' + response.statusText);
-                }
-            }); 
-        }
-
-    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/templated-epilogue/assets/css/main.css" />
@@ -79,6 +31,40 @@
     <div id="wrapper">
         <!-- Tours -->
         <section class="tour options" id="tour_section">
+            <article class="item">
+                <header>
+                    <script>
+                        for (i; i < services_array.length; i++) {
+                            img = "${services_array[i].image}"
+                                < h3 > ${ services_array[i].tour }</h3 >
+                        }
+                    </script>
+                </header>
+                <script>
+                    for (i; i < services_array.length; i++) {
+                        <p>${services_array[i].description}</p>;
+                    }
+                </script>
+                <!--Dropdown menu to select quantities-->
+                <select id="dropdown_list" onchange="getSelectedValue();">
+                    <option value="0">Select Quantity</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                </select>
+
+                <script>
+                function getSelectedValue() {
+                var selectedValue = document.getElementById("dropdown_list").value;
+                console.log(selectedValue);
+                } getSelectedValue();
+                </script>
+
+            </article>
 
         </section>
 
@@ -88,25 +74,22 @@
             <p>Please review your selected quantities before submitting your order.</p>
             <form name='quantity_form' action="http://localhost:8080/process_form" method="POST">
                 <script>
-                    function getSelectedValue() {
-                        var selectedValue = document.getElementById("dropdown_list").value;
-                        console.log(selectedValue);
-                    } getSelectedValue();
-
                     for (i = 0; i < services_array.length; i++) {
-                        if (dropdown_list[i].selectedValue != "Select Quantity") {
-                            document.write(`
-                <section class="item">
-                    <h3>${dropdown_list[i].selectedValue} at \$${services_array[i]["price"]}</h3>`);
-                        } else {
-                            document.write(`No ${services_array[i].tour} Tour selected`);
-                        }
+                        if (onchange = getSelectedValue(selectedValue[i]) != "Select Quantity") {
+                            document.write(` <section class="item">
+                                <h3>${`You have selected ${getSelectedValue(selectedValue[i])} ${services_array[i].tour} at \$${services_array[i]["price"]} each</h3>`)
+                        var sum = getSelectedValue(selectedValue[i]) += getSelectedValue(selectedValue[i+1]);
+                    } else {
+                            document.write(`No ${services_array[i].tour} Tour selected`)
+                        };
+                <br></br>
+                sum 
                 </script>
-                <br>
                 <!-- Purchase button that will redirect to the invoice page -->
                 <ul class="actions">
                     <input type="submit" value='Purchase' class="button big" name="purchase_submit_button">
                 </ul>
+                
             </form>
         </section>
 
@@ -145,9 +128,6 @@
         </footer>
 
     </div>
-
-    <!-- Scripts -->
-
 
 </body>
 
