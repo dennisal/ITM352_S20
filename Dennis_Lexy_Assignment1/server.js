@@ -1,65 +1,49 @@
 /* 
 Copied from info_server_Ex4.js from Lab13
 */
+var data = require('./public/services_data.js');
+var services_array = data.services_array;
+const queryString = require('query-string');
+
 var express = require('express');
 var app = express();
 var myParser = require("body-parser");
-var fs = require('fs');
-var services = require('./public/services_data.json');
-
 
 app.all('*', function (request, response, next) {
     console.log(request.method + ' to ' + request.path);
     next();
 });
 
-app.use(myParser.urlencoded({ extended: true }));
+app.use(myParser.urlencoded({ extended: true })); //get data in the body
+//to process the response from what is typed in the form
 app.post("/process_form", function (request, response) {
-    process_quantity_form(request.body, response);
-});
-/*
-function process_quantity_form(POST, response) {
-    let model = products[0]['model'];
-    let model_price = products[0]['price'];
+    let POST = request.body; // data would be packaged in the body
 
-    if (typeof POST['quantity_textbox'] != 'undefined') {
-        let q = POST['quantity_textbox'];
-        if (isNonNegInt(q)) {
-            var contents = fs.readFileSync('./views/display_quantity_template.view', 'utf8');
-            response.send(eval('`' + contents + '`')); // render template string
-        } else {
-            response.send(`${q} is not a quantity!`);
-        }
-    }
-}
-*/
-function process_quantity_form (POST, response) {
     if (typeof POST['purchase_submit_button'] != 'undefined') {
-       var contents = fs.readFileSync('./views/display_quantity_template.view', 'utf8');
-       receipt = '';
-       for(i in products) { 
-        let q = POST[`quantity_textbox${i}`];
-        let model = products[i]['model'];
-        let model_price = products[i]['price'];
-        if (isNonNegInt(q)) {
-          receipt += eval('`' + contents + '`'); // render template string
-        } else {
-          receipt += `<h3><font color="red">${q} is not a valid quantity for ${model}!</font></h3>`;
-        }
-      }
-      response.send(receipt);
-      response.end();
+        var validAmount=true; // creating a variable assuming that it'll be true
+        var amount=true;
+        for (i = 0; i < services_array.length; i++) {
+            qty=POST[`quantity${i}`];
+            amount = amount || qty>0; // If it has a value greater than 0 then it is good
+            validAmount = validAmount && isNonNegInt(qty);    // if it is both a quantity over 0 and is valid
+        } 
+        // if all quantities are valid, generate the invoice
+        const stringified = queryString.stringify(POST);
+        if (validAmount && amount) {
+            response.redirect("./invoice.html?"+stringified); // using the invoice.html and all the data that is input
+        }  
+        else {response.send('Enter a valid amount')} 
     }
-    function isNonNegInt(q, return_errors = false) {
-        errors = []; // assume no errors at first
-        if (q == '') q = 0; // handle blank inputs as if they are 0
-        if (q == 0) errors.push('<font color="red">Not a valid quantity!</font>') // Does not allow '0' items to be purchased
-        if (Number(q) != q) errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
-        if (q < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
-        if (parseInt(q) != q) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
-        return return_errors ? errors : (errors.length == 0);
-    }
- }
- 
+});
+
+function isNonNegInt(q, return_errors = false) {
+    errors = []; // assume no errors at first
+    if (q == '') q = 0; // handle blank inputs as if they are 0
+    if (Number(q) != q) errors.push('<font color="red">Not a number</font>'); // Check if string is a number value
+    if (q < 0) errors.push('<font color="red">Negative value</font>'); // Check if it is non-negative
+    if (parseInt(q) != q) errors.push('<font color="red">Not a full tour</font>'); // Check that it is an integer
+    return return_errors ? errors : (errors.length == 0);
+}
+
 app.use(express.static('./public'));
 app.listen(8080, () => console.log(`listening on port 8080`));

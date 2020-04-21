@@ -1,4 +1,5 @@
 // create a variable to store the products 'database' in
+
 var products;
 
 function isNonNegInt(q, return_errors = false) {
