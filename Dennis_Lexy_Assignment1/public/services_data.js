@@ -35,6 +35,7 @@ services_array = [
     "image": "./photos/valencia.jpg"
   }
 ]
-if(typeof module != 'undefined') {
+
+if (typeof module != 'undefined') {
   module.exports.services_array = services_array;
 }
