@@ -1,3 +1,7 @@
+/*
+Lexy Dennis' Assignment 1: services data
+*/
+
 services_array = [
   {
     "tour": "Madrid",

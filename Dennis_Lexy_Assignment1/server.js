@@ -1,5 +1,7 @@
 /* 
 Copied from info_server_Ex4.js from Lab13
+
+Lexy Dennis' Assignment 1: Server
 */
 
 var data = require('./public/services_data.js'); //load services_data.js file and set to variable 'data'
