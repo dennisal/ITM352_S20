@@ -123,34 +123,33 @@ app.get("/register", function (request, response) { //get a registration page
 </body>`;
     response.send(str); //puts string into page to be displayed as html
 });
+
 //The following code was taken from Lab 14 exercise 4
 app.post("/register_user", function (request, response) {
     // process a simple register form
-    console.log(request.body);
-    username = request.body.username;
-    errs = [];
-    //check if username is taken
-    if (typeof userdata[username] != 'undefined') {
-        errs.push("username taken");
+    username = request.body.username; //set var username to the username inputted by user
+    errs = []; //assume no errors at first
+    if (typeof userdata[username] != 'undefined') { //check if username is taken
+        errs.push("username taken"); //return error message if username is taken
     } else {
-        userdata[username] = {};
+        userdata[username] = {}; // Otherwise, input username into the json file for storage
     }
-    //Check if password is same as the repeat password field
-    if (request["body"]["password"] != request["body"]["repeat_password"]) {
-        errs.push("passwords don't match");
+    if (request["body"]["password"] != request["body"]["repeat_password"]) {//Check if password is same as the repeat password field
+        errs.push("passwords don't match"); // let user know if passwords do not match
     } else {
-        userdata[username].password = request["body"]["password"];
+        userdata[username].password = request["body"]["password"]; //otherwise, set password in json file to the inputted one
     }
 
-    userdata[username] = {};
+    //set the below variables to what was input by the user on the page
+    userdata[username] = {}; 
     userdata[username].password = request.body.password;
     userdata[username].email = request.body.email
 
-    if (errs.length == 0) {
-        fs.writeFileSync(user_info_file, JSON.stringify(userdata));
-        response.end(`New user ${username} registered`);
+    if (errs.length == 0) { //if there are no errors...
+        fs.writeFileSync(user_info_file, JSON.stringify(userdata));//input the above fields filled out by user into the user_data.json file
+        response.end(`New user ${username} registered`); //let user know he/she is registered
     } else {
-        response.end(JSON.stringify(errs));
+        response.end(JSON.stringify(errs)); //otherwise, show error message in query string
     }
 });
 
