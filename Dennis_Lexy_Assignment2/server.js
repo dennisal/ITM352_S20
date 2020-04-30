@@ -50,7 +50,7 @@ app.post("/process_form", function (request, response) { //process the quantity_
             return; //stops function
         }
 
-        else { response.redirect("./invoice.html?" + stringified) } //if there is invalid input, it re-routes back to the index page with the stringified path in the query string
+        else { response.redirect("./index.html?" + stringified) } //if there is invalid input, it re-routes back to the index page with the stringified path in the query string
 
     }
 
@@ -110,9 +110,10 @@ app.post("/register_user", function (request, response) {
     }
 
     //set the below variables to what was input by the user on the page
-    userdata[username] = {}; 
-    userdata[username].password = request.body.password;
-    userdata[username].email = request.body.email
+    userdata[username] = {}; //entered username replaces 'username' in json file
+    userdata[username].name = request.body.name; //supplies name to be set to 'name' in json file
+    userdata[username].password = request.body.password; //supplies password to be set to 'password' in json file
+    userdata[username].email = request.body.email; //supplies email to be set to 'email' in json file
 
     if (errs.length == 0) { //if there are no errors...
         fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the above fields filled out by user into the user_data.json file
