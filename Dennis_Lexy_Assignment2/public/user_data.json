@@ -8,35 +8,5 @@
     "name": "",
     "password": "grader",
     "email": ""
-  },
-  "lex": {
-    "password": "3",
-    "email": "lex@gmail.com"
-  },
-  "d": {
-    "password": "d",
-    "email": "d@hawaii.edu"
-  },
-  "": {
-    "password": "",
-    "email": ""
-  },
-  "hello": {
-    "password": "hello",
-    "email": "hello@gmail"
-  },
-  "l": {
-    "password": "l",
-    "email": ""
-  },
-  "yay": {
-    "name": {},
-    "password": {},
-    "email": {}
-  },
-  "ley": {
-    "name": "leylanni",
-    "password": "l",
-    "email": ""
   }
 }

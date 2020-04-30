@@ -116,7 +116,7 @@ app.post("/register_user", function (request, response) {
     userdata[username].email = request.body.email; //supplies email to be set to 'email' in json file
 
     if (errs.length == 0) { //if there are no errors...
-        fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the above fields filled out by user into the user_data.json file
+        fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the above fields filled out by user into the user_data.json file, using 'null, 2' to format the json file with 2 spaces as an indent between objects
         const successful_register_stringified = queryString.stringify(request.query); //stringify query
         response.redirect("./invoice.html?" + successful_register_stringified); //redirect user to invoice with newly created account
     } else {
