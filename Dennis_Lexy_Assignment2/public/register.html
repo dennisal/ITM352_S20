@@ -1,0 +1,29 @@
+<!-- Lexy Dennis' Assignment 2 Registration Page-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page</title>
+    <link href="./assets/css/main.css" rel="stylesheet"> <!-- Link CSS stylesheet -->
+</head>
+<body>
+
+    <!-- Ask user to log in -->
+    <center>
+        <h1>Register an account with us!</h1>
+        <!-- Link to login page if user already has an account -->
+        <h4 style="color:grey;">Already have an account? <br /> Click <a onclick="window.location='./login.html'+window.location.search;">here</a> to be taken to the login page</h4> <!-- Copied onclick code from stackoverflow.com to transfer current query string when linking to the login page -->
+    </center>
+
+    <!-- The following form is taken from Lab14 exercise 4-->
+    <form action="/register_user" method="POST">
+        <input type="text" name="username" size="40" placeholder="Enter Username" ><br />
+        <input type="password" name="password" size="40" placeholder="Enter Password"><br />
+        <input type="password" name="repeat_password" size="40" placeholder="Confirm Password"><br />
+        <input type="email" name="email" size="40" placeholder="Enter Email"><br />
+        <center><input type="submit" value="Register" id="submit"></center>
+    </form>
+
+</body>
+</html>

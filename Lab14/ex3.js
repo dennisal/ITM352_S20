@@ -8,7 +8,7 @@ var myParser = require("body-parser");
 if (fs.existsSync(user_info_file)) { //use existsSync means it waits until this path is verified before executing other code (Sync implies waiting)
     var file_stats = fs.statSync(user_info_file);
 
-    var userdata = fs.readFileSync(user_info_file, 'utf-8'); //open file user_data.json and assigns it (in a string) to variable data
+    var userdata = fs.readFileSync(user_info_file, 'utf-8'); //open file user_data.json and assigns it (in a string) to variable userdata
     userdata = JSON.parse(userdata); //json parse will convert string into json object
     username = 'newuser';
     userdata[username] = {};
