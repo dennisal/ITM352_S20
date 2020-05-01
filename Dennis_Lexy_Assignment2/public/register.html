@@ -22,7 +22,7 @@
     </center>
 
     <!-- The following form is taken from Lab14 exercise 4-->
-    <form action="/register_user" method="POST">
+    <form name="registration_form" action="/register_user" method="POST">
         <input type="text" name="username" size="40" placeholder="Enter Username"><br />
         <input type="text" name="name" size="40" placeholder="Enter Name"><br />
         <input type="password" name="password" size="40" placeholder="Enter Password"><br />
@@ -32,6 +32,11 @@
     </form>
 
     <script>
+
+        window.onload = function () { //load the following functions only after this page and all of its related files are loaded
+            registration_form.action += location.search; //Adding the current location (query string) to the query string with the past one (the one with the tour quantities in it)
+        }
+
         fetch('user_data.json').then(function (response) {
             if (response.ok) {
                 response.json().then(function (json) {

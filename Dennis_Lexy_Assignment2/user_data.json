@@ -8,5 +8,15 @@
     "name": "Lexy",
     "password": "3",
     "email": "lexy@gmail.com"
+  },
+  "yay": {
+    "name": "Excited",
+    "password": "e",
+    "email": "yay@yahoo.com"
+  },
+  "ME": {
+    "name": "Me",
+    "password": "d",
+    "email": "Me@hotmail.com"
   }
 }
