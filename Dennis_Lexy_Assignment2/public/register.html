@@ -1,30 +1,94 @@
 <!-- Lexy Dennis' Assignment 2 Registration Page-->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Page</title>
     <link href="./assets/css/main.css" rel="stylesheet"> <!-- Link CSS stylesheet -->
 </head>
+
 <body>
 
     <!-- Ask user to log in -->
     <center>
         <h1>Register an account with us!</h1>
         <!-- Link to login page if user already has an account -->
-        <h4 style="color:grey;">Already have an account? <br /> Click <a onclick="window.location='./login.html'+window.location.search;">here</a> to be taken to the login page</h4> <!-- Copied onclick code from stackoverflow.com to transfer current query string when linking to the login page -->
+        <h4 style="color:grey;">Already have an account? <br /> Click <a
+                onclick="window.location='./login.html'+window.location.search;">here</a> to be taken to the login page
+        </h4>
+        <!-- Copied onclick code from stackoverflow.com to transfer current query string when linking to the login page -->
     </center>
 
     <!-- The following form is taken from Lab14 exercise 4-->
     <form action="/register_user" method="POST">
-        <input type="text" name="username" size="40" placeholder="Enter Username" ><br />
-        <input type="text" name="name" size="40" placeholder="Enter Name" ><br />
+        <input type="text" name="username" size="40" placeholder="Enter Username"><br />
+        <input type="text" name="name" size="40" placeholder="Enter Name"><br />
         <input type="password" name="password" size="40" placeholder="Enter Password"><br />
         <input type="password" name="repeat_password" size="40" placeholder="Confirm Password"><br />
         <input type="email" name="email" size="40" placeholder="Enter Email"><br />
         <center><input type="submit" value="Register" id="submit"></center>
     </form>
 
+    <script>
+        fetch('user_data.json').then(function (response) {
+            if (response.ok) {
+                response.json().then(function (json) {
+                    products = json;
+                    display_products();
+                });
+            } else {
+                console.log('Network request for products.json failed with response ' + response.status + ': ' + response.statusText);
+            }
+        })
+
+        fetch('/process_purchase',
+            {
+                method: 'post',
+                body: data
+            }
+        ).then(function (response) {
+            if (response.ok) {
+                response.json().then(function (invoice_data) {
+                    display_invoice(invoice_data);
+                });
+            } else {
+                console.log('Network request for /process_form failed with response ' + response.status + ': ' + response.statusText);
+            }
+        })
+
+        if (params.has('username')) { // after the form is submitted this checks that values entered are valid before logging in
+            invalid = false; // assume values entered are valid from the start
+
+            if (params.has(`username`)) { // check the username field for input
+                enteredName = params.get(`username`); //get the value for the username field and make it sticky in case of invalid entry
+                login_form[`username`].value = enteredName; // the value of username is set to variable 'enteredName'
+
+                if (enteredName == '') { // if there is no entered username...
+                    invalid = true; // it is invalid
+                }
+
+            }
+
+            if (params.has(`password`)) { // check the password field for input
+                enteredName = params.get(`password`); //get the value for the username field and make it sticky in case of invalid entry
+                login_form[`password`].value = enteredPassword; // the value of password is set to variable 'enteredPassword'
+
+                if (enteredPassword == '') { // if there is no entered password...
+                    invalid = true; // it is invalid
+                }
+
+            }
+
+            if (invalid) { // Now respond with an alert if info is not entered
+                alert("Please enter a valid username/password combo or create an account");// Respond to incorrect or unrecognized username/password combo with alert
+            }
+
+        }
+
+    </script>
+
 </body>
+
 </html>

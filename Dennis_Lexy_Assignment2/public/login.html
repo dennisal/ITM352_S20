@@ -2,67 +2,41 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
     <link href="./assets/css/main.css" rel="stylesheet"> <!-- Link CSS stylesheet -->
 </head>
+
 <body>
     <!-- Ask user to log in -->
     <center>
         <h1>Please log in to continue to the checkout page</h1>
         <!-- Link to registration page if new user -->
-        <h4 style="color:grey;">New user? Please register <a onclick="window.location='./register.html'+window.location.search;">here</a></h4> <!-- Copied onclick code from stackoverflow.com to transfer current query string when linking to the registration page -->
+        <h4 style="color:grey;">New user? Please register <a
+                onclick="window.location='./register.html'+window.location.search;">here</a></h4>
+        <!-- Copied onclick code from stackoverflow.com to transfer current query string when linking to the registration page -->
     </center>
 
     <!-- Log in form taken from Lab14 exercise 3-->
     <form name="login_form" action="/check_login" method="POST">
-        <input type="text" name="username" size="40" placeholder="Enter Username" ><br />
-        <input type="password" name="password" size="40" placeholder="Enter Password"><br />
+        <input type="text" name="username" size="40" placeholder="Enter Username"><span
+            id="username_message"></span><br />
+        <input type="password" name="password" size="40" placeholder="Enter Password"><span
+            id="password_message"></span><br />
         <center><input type="submit" value="Log In" name="submit"></center>
     </form>
 
     <script>
-        //The below code was copied from my Assignment 1 index.html to make username and password fields sticky and give alert if fields are invalid
-        window.onload = function () { //this page and all of the related files are loaded before this function is
-            let params = (new URL(document.location)).searchParams; // get the query string which has the form data
-            console.log(`hellooooo`);
 
-            if (params.has('username')) {console.log(`step 1 works`); // after the form is submitted this checks that values entered are valid before logging in
-                invalid = false; // assume values entered are valid from the start
-                
-
-                    if (params.has(`username`)) { // check the username field for input
-                        enteredName = params.get(`username`); //get the value for the username field and make it sticky in case of invalid entry
-                        login_form[`username`].value = enteredName; // the value of username is set to variable 'enteredName'
-
-                        if (enteredName == '') { // if there is no entered username...
-                            invalid = true; // it is invalid
-                        }
-
-                    }
-
-                    if (params.has(`password`)) { // check the password field for input
-                        enteredName = params.get(`password`); //get the value for the username field and make it sticky in case of invalid entry
-                        login_form[`password`].value = enteredPassword; // the value of password is set to variable 'enteredPassword'
-
-                        if (enteredPassword == '') { // if there is no entered password...
-                            invalid = true; // it is invalid
-                        }
-
-                    }
-
-                if (invalid) { // Now respond with an alert if info is not entered
-                    console.log(`this should work`);
-                    alert("Please enter a valid username/password combo or create an account");// Respond to incorrect or unrecognized username/password combo with alert
-                }
-
-            }
-
+        window.onload = function () { //load the following after this page and all of its related files are loaded
+            login_form.action += location.search; //Adding the current location (query string) to the query string with the tour quantities in it
         }
 
     </script>
 
 </body>
-</html>
+
+</html>`
