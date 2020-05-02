@@ -1,11 +1,10 @@
-
 day = 19;
 month = "July";
 year = 1999;
 
 step1 = year % 100;
 step2 = parseInt(step1 / 4);
-step3 = step2 + step1;
+step3 = step1 + step2;
 if (month == "January") {
     step5 = day + step3;
 } else {
@@ -34,22 +33,27 @@ if (month == "January") {
             step4 = 5; break;
     }
     step6 = step4 + step3;
-    step7 = day + step6;
+    step7 = step6 + day;
 }
-step8 = (typeof step5 !== 'undefined') ? step5 : step7;
-//Leap Year?
-isLeapYear =( (year % 4 == 0) && (year % 100 != 0) && (year % 400 == 0));
-if (parseInt(year/100) == 19)  {
-    //1900s Path
+step8 = (typeof step5 !== 'undefined') ? step5 : step7
+//Leap Year function
+isLeapYear = ( (year % 4 == 0) && (year % 100 != 0) && (year % 400 == 0));
+
+if (parseInt(year/100) == 19) {
+    //1900s
     if(isLeapYear) {
-        if(month == "January" || month == "February") {
-            step9 = step8 - 1;
+        if(month == "January" || "February") {
+            step9 = step8 -1;
+        } else {
+            step9 = step8;
         }
+    } else {
+        step9 = step8;
     }
 } else {
-    //2000s Path
+    //2000s
     if(isLeapYear) {
-        if(month == "January" || month == "February") {
+        if(month == "January" || "February") {
             step9 = step8 - 2;
         } else {
             step9 = step8 - 1;
@@ -58,6 +62,26 @@ if (parseInt(year/100) == 19)  {
         step9 = step8 - 1;
     }
 }
-
-
-console.log(step9);
+step10 = step9 % 7;
+if(step10 == 0) {
+    dow = 'Sunday';
+}
+else if(step10 == 1) {
+    dow = 'Monday';
+}
+else if(step10 == 2) {
+    dow = 'Tuesday';
+}
+else if(step10 == 3) {
+    dow = 'Wednesday';
+}
+else if(step10 == 4) {
+    dow = 'Thursday';
+}
+else if(step10 == 5) {
+    dow = 'Friday';
+}
+else if(step10 == 6) {
+    dow = 'Saturday';
+}
+console.log(`${month} ${day}, ${year} was a ${dow}`);
