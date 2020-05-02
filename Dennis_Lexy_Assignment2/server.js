@@ -101,6 +101,8 @@ app.post("/register_user", function (request, response) {
     // process a simple register form
     username = request.body.username; //set var username to the username inputted by user
     errs = []; //assume no errors at first
+    var registered_username = request.body["username"]; //set var registered_username to the username entered in registration page
+    var registered_name = request.body["name"]; //set var 'registered_name' to the entered name in register page
 
     if (typeof userdata[username] != 'undefined') { //check if username is taken
         errs.push("username taken"); //return error message if username is taken
@@ -125,11 +127,13 @@ app.post("/register_user", function (request, response) {
         userdata[username].email = request.body.email; //supplies email to be set to 'email' in json file
 
         //if there are no errors...
-        fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the above fields filled out by user into the user_data.json file, using 'null, 2' to format the json file with 2 spaces as an indent between objects
-        const registration_stringified = queryString.stringify(request.query); //stringify query
-        response.redirect("./invoice.html?" + registration_stringified); //redirect user to invoice with newly created account
+        request.query.username = registered_username; //fill username in query as the registered username
+        request.query.name = registered_name; //fill name in query string as the registered name
+        fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the fields filled out by user into the user_data.json file, using 'null, 2' to format the json file with 2 spaces as an indent between objects
+        const registration_stringified = queryString.stringify(request.query); //converts the data to a string to add to the previous query string, and sets it to variable 'registration_stringified'
+        response.redirect("./invoice.html?" + registration_stringified); //redirect user to invoice with newly created account info in query string
     } else {
-        response.end(JSON.stringify(errs)); //otherwise, show error message in query string
+        response.end(JSON.stringify(errs)); //otherwise, show error message
     }
 
 });

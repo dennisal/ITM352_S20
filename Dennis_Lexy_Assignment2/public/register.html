@@ -24,73 +24,61 @@
     <!-- The following form is taken from Lab14 exercise 4-->
     <form name="registration_form" action="/register_user" method="POST">
         <input type="text" name="username" size="40" placeholder="Enter Username"><br />
-        <input type="text" name="name" size="40" placeholder="Enter Name"><br />
-        <input type="password" name="password" size="40" placeholder="Enter Password"><br />
-        <input type="password" name="repeat_password" size="40" placeholder="Confirm Password"><br />
-        <input type="email" name="email" size="40" placeholder="Enter Email"><br />
-        <center><input type="submit" value="Register" id="submit"></center>
+            <input type="text" name="name" size="40" placeholder="Enter Name"><br />
+            <input type="password" name="password" size="40" placeholder="Enter Password" onmouseout="Errors(this);">
+            <span id="password_message"></span>
+            <input type="password" name="repeat_password" size="40" placeholder="Confirm Password" onmouseout="Errors(this);">
+            <span id="repeat_password_message"></span>
+            <input type="email" name="email" size="40" placeholder="Enter Email" onmouseout="Errors(this);">
+            <span id="email_message"></span><br />
+            <center><input type="submit" value="Register" id="submit" name="register_button"></center>
     </form>
 
     <script>
 
+        function Errors(return_errors = false) { //function that identifies errors
+            errors = []; //assume no errors at first
+            //password errors
+            if (0 > registration_form.password.value.length < 6) {
+                errors.push('<font color="red">Password must be at least 6 characters</font>'); //Password must be at least 6 characters long
+                //document.getElementById('password_message').innerHTML = errors; //write error message in the span
+            }
+            if (registration_form["repeat_password"] != "" && registration_form["repeat_password"].value != registration_form["password"].value) {
+                errors.push('<font color="red">Passwords do not match</font>');// let user know if passwords do not match
+                //document.getElementById('repeat_password_message').innerHTML = errors;
+            }
+            //email errors
+            if (registration_form.email != '' && registration_form.email.value != '@gmail.com', '@hotmail.com', '@yahoo.com', '@msn.com', '@hawaii.edu') {
+                errors.push('<font color="red">Enter an email address with a gmail, yahoo, hotmail, msn, or hawaii.edu provider</font>'); // Must have email address
+                //document.getElementById('email_message').innerHTML = errors;
+            } 
+            return return_errors ? errors : (errors.length == 0); //return if there are errors or not
+            /* if (return_errors = true) { // if there are errors...
+                alert('Please review and edit errors before registering');
+            } */
+        }
+
         window.onload = function () { //load the following functions only after this page and all of its related files are loaded
             registration_form.action += location.search; //Adding the current location (query string) to the query string with the past one (the one with the tour quantities in it)
-        }
-
-        fetch('user_data.json').then(function (response) {
-            if (response.ok) {
-                response.json().then(function (json) {
-                    products = json;
-                    display_products();
-                });
-            } else {
-                console.log('Network request for products.json failed with response ' + response.status + ': ' + response.statusText);
-            }
-        })
-
-        fetch('/process_purchase',
-            {
-                method: 'post',
-                body: data
-            }
-        ).then(function (response) {
-            if (response.ok) {
-                response.json().then(function (invoice_data) {
-                    display_invoice(invoice_data);
-                });
-            } else {
-                console.log('Network request for /process_form failed with response ' + response.status + ': ' + response.statusText);
-            }
-        })
-
-        if (params.has('username')) { // after the form is submitted this checks that values entered are valid before logging in
-            invalid = false; // assume values entered are valid from the start
-
-            if (params.has(`username`)) { // check the username field for input
-                enteredName = params.get(`username`); //get the value for the username field and make it sticky in case of invalid entry
-                login_form[`username`].value = enteredName; // the value of username is set to variable 'enteredName'
-
-                if (enteredName == '') { // if there is no entered username...
-                    invalid = true; // it is invalid
-                }
-
             }
 
-            if (params.has(`password`)) { // check the password field for input
-                enteredName = params.get(`password`); //get the value for the username field and make it sticky in case of invalid entry
-                login_form[`password`].value = enteredPassword; // the value of password is set to variable 'enteredPassword'
+        /*
+                 fetch('/register_user',
+                    {
+                        method: 'post',
+                        body: data,
+                    }
+                ).then(function (response) {
+                    if (response.ok) {
+                        response.json().then(function (user_data) {
+                            display_accountInfo(user_data);
+                        });
+                    } else {
+                        console.log('Network request for /register_user failed with response ' + response.status + ': ' + response.statusText);
+                    }
+                })
 
-                if (enteredPassword == '') { // if there is no entered password...
-                    invalid = true; // it is invalid
-                }
-
-            }
-
-            if (invalid) { // Now respond with an alert if info is not entered
-                alert("Please enter a valid username/password combo or create an account");// Respond to incorrect or unrecognized username/password combo with alert
-            }
-
-        }
+        }*/
 
     </script>
 
