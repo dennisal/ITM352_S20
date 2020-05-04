@@ -71,62 +71,95 @@ app.post("/check_login", function (request, response) {// Process login form POS
     errs = []; //assume no errors at first
     var login_username = request.body["username"]; //set var login_username to the username field in login page
 
-
     if (typeof userdata[login_username] != 'undefined') { // If the username is not undefined...
         var user_info = userdata[login_username]; //set variable 
 
-        if (user_info.password != request.body["password"]) { //check if username exists in json data already
+        if (user_info.password != request.body["password"]) { //check if password is the same in json data
             errs.push("Incorrect Password"); //return error message if password is wrong
         } else { //If the password matches...
-            console.log(request.query);
-            request.query.username = login_username;
-            request.query.name = user_info.name;
+            request.query.username = login_username;// add username on file to query string
+            request.query.name = user_info.name; // add name on file to query string 
             const userdata_stringified = queryString.stringify(request.query); //converts the data to a string, adds it to the previous query string, and sets it to variable 'stringified'
             response.redirect('./invoice.html?' + userdata_stringified); // redirect the page to the login page with the stringified path in the query string
-            //response.redirect(`./invoice.html? + ${JSON.stringify(request.query)}`); //Redirect user to a checkout that informs them that *username* has logged in successfully
-            console.log(userdata_stringified);
             return; //stops function
         }
 
     } else {
-        errs.push("Incorrect Username"); //If the username does not match, it is will return this message 
+        errs.push("Incorrect Username"); //If the username does not match, it will return this message 
     }
 
     response.redirect(`./login.html?username=${login_username}&error=%{errs.push} + ${queryString.stringify(request.query)}`); //redirect the user to the login page to re-enter his/her login info with the error message in the query string, but keeping the data from quantity_form
 
 });
 
+//The below function was taken from w3resource.com
+function ValidateEmail(inputText) {
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // states that email addresses can only contain letters, numbers, and the characters “_” and “.” in the first part, the host machine can only contain letters and numbers and “.” characters, and the domain name can only be 2 or 3 letters
+    if (inputText.match(mailformat)) { //if the input text matches the above email requirements...
+        return true; //the function is true (it is a valid email)
+    }
+    else {
+        return false; //otherwise function is false
+    }
+}
+
+//The following function was copied from w3resource.com
+function isAlphaNumeric(input) {
+    var letterNumber = /^[0-9a-zA-Z]+$/; //set variable to only numbers and letters
+    if (input.match(letterNumber)) { //input must only be letters or numbers to return true
+        return true;
+    }
+    else { //non-numbers or letters will return false
+        return false; //otherwise function is false
+    }
+}
+
 //The following code was taken from Lab 14 exercise 4
 app.post("/register_user", function (request, response) {
     // process a simple register form
-    username = request.body.username; //set var username to the username inputted by user
     errs = []; //assume no errors at first
     var registered_username = request.body["username"]; //set var registered_username to the username entered in registration page
     var registered_name = request.body["name"]; //set var 'registered_name' to the entered name in register page
 
-    if (typeof userdata[username] != 'undefined') { //check if username is taken
-        errs.push("username taken"); //return error message if username is taken
-    }
-    if (username == '') {
+    //username 
+    if (registered_username == '') { //must have a username
         errs.push("Please enter a username");
+    } else if (registered_username.length < 4 || registered_username.length > 10 ) { // if username is not between 4 and 10 characters...
+        errs.push('Username must be between 4 and 10 characters'); //error message
+    } else if (isAlphaNumeric(registered_username) == false) { //if username is not only letters and numbers...
+        errs.push('Please only use alphanumeric characters'); //give error message
+    } else if (typeof userdata[registered_username] != "undefined") { //check if username already exists
+        errs.push("Username taken"); //return error message if username is taken
     }
-    if (request["body"]["password"] != request["body"]["repeat_password"]) {//Check if password is same as the repeat password field
-        errs.push("passwords don't match"); // let user know if passwords do not match
+
+    //name 
+    if(registered_name.length > 30) { //name must be less than 30 characters
+        errs.push('This field cannot be longer than 30 characters')
     }
-    if (request.body.password == '') {
-        errs.push("Please enter a username");
+
+    //password
+    if (request.body.password == '') { //must have a password
+        errs.push("Please enter a password");
+    } else if (request.body.password.length <= 5) { //must have a password at least 6 characters long
+        errs.push("Password must be at least 6 characters");
+    } else if (request["body"]["password"] != request["body"]["repeat_password"]) {//Check if password is same as the repeat password field
+        errs.push("Passwords don't match"); // let user know if passwords do not match
     }
+
+    //email
     if (request.body.email == '') {
         errs.push("Please enter an email address");
+    } else if (ValidateEmail(request.body.email) == false) {
+        errs.push("Please enter a valid email address")
     }
-    if (errs.length == 0) {
-        //set the below variables to what was input by the user on the page
-        userdata[username] = {}; //entered username replaces 'username' in json file
-        userdata[username].name = request.body.name; //supplies name to be set to 'name' in json file
-        userdata[username].password = request.body.password; //supplies password to be set to 'password' in json file
-        userdata[username].email = request.body.email; //supplies email to be set to 'email' in json file
 
-        //if there are no errors...
+    if (errs.length == 0) { //If no errors...
+        //set the below variables to what was input by the user on the page
+        userdata[registered_username] = {}; //entered username replaces 'username' in json file
+        userdata[registered_username].name = request.body.name; //supplies name to be set to 'name' in json file
+        userdata[registered_username].password = request.body.password; //supplies password to be set to 'password' in json file
+        userdata[registered_username].email = request.body.email; //supplies email to be set to 'email' in json file
+        //set the values to be displayed in query string
         request.query.username = registered_username; //fill username in query as the registered username
         request.query.name = registered_name; //fill name in query string as the registered name
         fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the fields filled out by user into the user_data.json file, using 'null, 2' to format the json file with 2 spaces as an indent between objects
