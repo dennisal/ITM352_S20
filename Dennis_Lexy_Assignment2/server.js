@@ -124,17 +124,17 @@ app.post("/register_user", function (request, response) {
     //username 
     if (registered_username == '') { //must have a username
         errs.push("Please enter a username");
-    } else if (registered_username.length < 4 || registered_username.length > 10 ) { // if username is not between 4 and 10 characters...
-        errs.push('Username must be between 4 and 10 characters'); //error message
+    } else if (registered_username.length < 4 || registered_username.length > 10) { // if username is not between 4 and 10 characters...
+        errs.push("Username must be between 4 and 10 characters"); //error message
     } else if (isAlphaNumeric(registered_username) == false) { //if username is not only letters and numbers...
-        errs.push('Please only use alphanumeric characters'); //give error message
+        errs.push("Please only use alphanumeric characters"); //give error message
     } else if (typeof userdata[registered_username] != "undefined") { //check if username already exists
         errs.push("Username taken"); //return error message if username is taken
     }
 
     //name 
-    if(registered_name.length > 30) { //name must be less than 30 characters
-        errs.push('This field cannot be longer than 30 characters')
+    if (registered_name.length > 30) { //name must be less than 30 characters
+        errs.push("This field cannot be longer than 30 characters")
     }
 
     //password
