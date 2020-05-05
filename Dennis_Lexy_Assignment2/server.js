@@ -1,7 +1,9 @@
 /* 
 Copied from info_server_Ex4.js from Lab13
 
-Lexy Dennis' Assignment 1: Server
+Copied from Lexy Dennis' Assignment 1: Server
+
+Lexy Dennis' Assignment 2 Server
 */
 
 var data = require('./public/services_data.js'); //load services_data.js file and set to variable 'data'
@@ -80,7 +82,7 @@ app.post("/check_login", function (request, response) {// Process login form POS
             request.query.username = login_username;// add username on file to query string
             request.query.name = user_info.name; // add name on file to query string 
             const userdata_stringified = queryString.stringify(request.query); //converts the data to a string, adds it to the previous query string, and sets it to variable 'stringified'
-            response.redirect('./invoice.html?' + userdata_stringified); // redirect the page to the login page with the stringified path in the query string
+            response.redirect('./invoice.html?' + userdata_stringified); // redirect the page to the invoice page with the stringified path in the query string
             return; //stops function
         }
 

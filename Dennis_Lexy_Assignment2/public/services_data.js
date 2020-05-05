@@ -1,5 +1,6 @@
 /*
-Lexy Dennis' Assignment 1: services data
+Copied from Lexy Dennis' Assignment 1: services data
+Lexy Dennis' Assignment 2 service data
 */
 
 services_array = [
