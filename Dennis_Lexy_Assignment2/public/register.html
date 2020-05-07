@@ -66,7 +66,9 @@
                     response.json().then(function (errors) { //then make the response 'errors' a json object
 
                         if (Object.keys(errors).length == 0) { //if no errors...
-                            window.location.href = './invoice.html' + location.search; //get invoice.html if data is good with the query string
+                            var username = registration_form['username'].value;// set variable
+                            var name = registration_form['name'].value; //set variable
+                            window.location.href = './invoice.html' + location.search + '&username=' + username + '&name=' + name; //get invoice.html if data is good with the query string
                         } else {
 
                             for (errorId in errors) { // if there are errors associated with the error message span...

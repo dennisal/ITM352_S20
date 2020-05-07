@@ -31,8 +31,8 @@
     }
 
     if (params.has('username')) { //if query string has info about user...
-        var name = params.get(`name`); //get the name of the user and assign it to var 'name'
-        var username = params.get(`username`); //get the user's username from the query string and assign it to var 'username'
+        var name = params.get('name'); //get the name of the user and assign it to var 'name'
+        var username = params.get('username'); //get the user's username from the query string and assign it to var 'username'
     }
 
 </script>
@@ -58,7 +58,7 @@
 
     <script> // Above the invoice, thank the user personally by his/her name
 
-        if (name != '') {
+        if (name != 'undefined' && name != '') {
 
             document.write(`
                 <h3 align="center">Thank you for your purchase, ${name}!<br />Review your order below</h3><br />

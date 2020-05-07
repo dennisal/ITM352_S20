@@ -14,8 +14,8 @@ var app = express(); //set module to variable 'app'
 var myParser = require("body-parser"); //load and cache body parser module
 var fs = require('fs'); // load and cache fs module
 var user_info_file = './user_data.json'; // set the .json file to the variable 'user_info_file'
-var userdata = fs.readFileSync(user_info_file, 'utf-8'); //open file user_data.json and assign it (in a string) to var userdata
-userdata = JSON.parse(userdata); //json parse will convert string into json object
+var userdata_file = fs.readFileSync(user_info_file, 'utf-8'); //open file user_data.json and assign it (in a string) to var userdata
+userdata = JSON.parse(userdata_file); //json parse will convert string into json object
 
 app.all('*', function (request, response, next) { //for all request methods...
     console.log(request.method + ' to ' + request.path); //write in the console the request method and its path
@@ -71,24 +71,23 @@ function isNonNegInt(q, return_errors = false) {
 app.post("/check_login", function (request, response) {// Process login form POST and redirect to checkout if information in login page matches that in the login JSON file, back to login page if not
     errs = {}; //assume no errors at first
     var login_username = request.body["username"]; //set var login_username to the username field in login page
+    var user_info = userdata[login_username]; //set variable
     var login_password = request.body["password"]; //set variable
 
-    if (typeof userdata[login_username] == 'undefined') { // If the username is not undefined...
-        errs.username = "Incorrect Username"; //If the username does not match, it will return this message 
+    if (typeof userdata[login_username] == 'undefined' || userdata[login_username] ==  '') { // If the username is not undefined...
+        errs.username = '<font color="red">Incorrect Username</font>'; //If the username does not match, it will return this message 
+        errs.password = '<font color="red">Incorrect Password</font>'; //If username does not match anything in json file, password cannot match username
+    } else if (user_info['password'] != login_password) {
+        errs.username = ''; //remove error
+        errs.password = '<font color="red">Incorrect Password</font>'; //wrong password still
     } else {
-        delete errs.username;
-
-        if (login_password == 'undefined') {
-            errs.password = "Incorrect Password"; //notify user they must enter password
-        } else if (userdata[login_username]["password"] != login_password) { //check if password is the same in json data
-            errs.password = "Password does not match password on file"; //return error message if password is wrong
-        };
-
-    };
-
+        delete errs.username; //remove error
+        delete errs.password; //rremove error
+    }
+    
     if (Object.keys(errs).length == 0) { //If no errors...
         request.query.username = login_username;// add username on file to query string
-        request.query.name = userdata[login_username].name; // add name on file to query string 
+        request.query.name = user_info.name; // add name on file to query string 
         const userdata_stringified = queryString.stringify(request.query); //converts the data to a string, adds it to the previous query string, and sets it to variable 'stringified'
         //response.redirect('./invoice.html?' + userdata_stringified); // redirect the page to the invoice page with the stringified path in the query string //commented out because invoice is requested from browser
         response.json({}); //give response parsed as json object
@@ -130,37 +129,50 @@ app.post("/register_user", function (request, response) {
 
     //username 
     if (registered_username == '') { //must have a username
-        errs.username = "Please enter a username";
+        errs.username = '<font color="red">Please Enter A Username</font>';
     } else if (registered_username.length < 4 || registered_username.length > 10) { // if username is not between 4 and 10 characters...
-        errs.username = "Username must be between 4 and 10 characters"; //error message
+        errs.username = '<font color="red">Username Must Be Between 4 & 10 Characters</font>'; //error message
     } else if (isAlphaNumeric(registered_username) == false) { //if username is not only letters and numbers...
-        errs.username = "Please only use alphanumeric characters"; //give error message
+        errs.username = '<font color="red">Please Only Use Alphanumeric Characters</font>'; //give error message
     } else if (typeof userdata[registered_username] != "undefined") { //check if username already exists
-        errs.username = "Username taken"; //return error message if username is taken
+        errs.username = '<font color="red">Username Taken</font>'; //return error message if username is taken
+    } else {
+        errs.username = null;
     }
 
     //name 
     if (registered_name.length > 30) { //name must be less than 30 characters
-        errs.name = "This field cannot be longer than 30 characters";
+        errs.name = '<font color="red">Cannot Be Longer Than 30 Characters</font>';
+    } else {
+        errs.name = null;
     }
 
     //password
-    if (request.body.password == '') { //must have a password
-        errs.password = "Please enter a password";
+    if (request.body.password.length == 0) { //must have a password
+        errs.password = '<font color="red">Please Enter A Password</font>';
     } else if (request.body.password.length <= 5) { //must have a password at least 6 characters long
-        errs.password = "Password must be at least 6 characters";
+        errs.password = '<font color="red">Password Must Be At Least 6 Characters</font>';
     } else if (request["body"]["password"] != request["body"]["repeat_password"]) {//Check if password is same as the repeat password field
-        errs.repeat_password = "Passwords don't match"; // let user know if passwords do not match
+        errs.password = null;
+        errs.repeat_password = '<font color="red">Passwords Do Not Match</font>'; // let user know if passwords do not match
+    } else {
+        delete errs.password;
+        errs.repeat_password = null;
     }
 
     //email
     if (request.body.email == '') { //must have an email
-        errs.email = "Please enter an email address";
+        errs.email = '<font color="red">Please Enter An Email Address</font>';
     } else if (ValidateEmail(request.body.email) == false) { //if does not follow proper email format, give error
-        errs.email = "Please enter a valid email address";
+        errs.email = '<font color="red">Please Enter A Valid Email Address</font>';
+    } else {
+        errs.email =null;
     }
 
-    if (Object.keys(errs).length == 0) { //If no errors...
+    let result = !Object.values(errs).every(o => o === null); //'result' will return false when each key in 'errs' is null
+    console.log(result); //logs 'true' or 'false' for null keys to the console
+
+    if (result == false){ //If no errors...
         //set the below variables to what was input by the user on the page
         userdata[registered_username] = {}; //entered username replaces 'username' in json file
         userdata[registered_username].name = request.body.name; //supplies name to be set to 'name' in json file
