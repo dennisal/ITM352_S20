@@ -26,7 +26,8 @@
         };
 
     } else {
-        // window.location.href = './index.html'; // if there is nothing entered in any of the textboxes, send the user back to the index.html page to select tour amounts
+        window.location.href = './index.html'; // if there is nothing entered in any of the textboxes, send the user back to the index.html page to select tour amounts
+        alert('Please re-select your tours and login again'); //notice to re-enter tour amounts
     }
 
     if (params.has('username')) { //if query string has info about user...

@@ -23,18 +23,51 @@
     </center>
 
     <!-- Log in form taken from Lab14 exercise 3-->
-    <form name="login_form" action="/check_login" method="POST">
-        <input type="text" name="username" size="40" placeholder="Enter Username"><span
-            id="username_message"></span><br />
-        <input type="password" name="password" size="40" placeholder="Enter Password"><span
-            id="password_message"></span><br />
+    <form name="login_form" action="javascript:login_user();" method="GET">
+
+        <input type="text" name="username" size="40" placeholder="Enter Username">
+        <span id="username_message"></span>
+        <input type="password" name="password" size="40" placeholder="Enter Password">
+        <span id="password_message"></span><br />
         <center><input type="submit" value="Log In" name="submit"></center>
+
     </form>
 
     <script>
 
-        window.onload = function () { //load the following after this page and all of its related files are loaded
-            login_form.action += location.search; //Adding the current location (query string) to the query string with the tour quantities in it
+        //Taken from Assignment1_1Microservice example
+        function login_user() { //function to validate the form on the server and return errors (if any) to the browser without leaving the page
+            data = new URLSearchParams(new FormData(login_form)); // 'data' is set to the login_form data string
+            
+            fetch('/check_login' + location.search, //fetch the response from app.post for check_login from the server and attach current location to the query string
+                {
+                    method: 'post',
+                    body: data,
+                    redirect: 'follow'
+                }
+            ).then(function (response) { //after fetch comes back from the server, execute function
+
+                if (response.ok) { //if the response is ok...
+
+                    response.json().then(function (errors) { //then make the response 'errors' a json object
+                            
+                        if (Object.keys(errors).length == 0) { //if no errors...
+                            window.location.href = './invoice.html' + location.search; //get invoice.html if data is good with the query string
+                        } else {
+
+                            for (errorId in errors) { // if there are errors associated with the ID message span...
+                                document.getElementById(errorId + '_message').innerHTML = errors[errorId]; //write those errors to the appropriate span
+                            };
+
+                        };
+                    });
+
+
+                } else {
+                    console.log('Network request for /check_login failed with response ' + response.status + ': ' + response.statusText); //notify me in the console if the request didn't go through
+                }
+
+            });
         }
 
     </script>

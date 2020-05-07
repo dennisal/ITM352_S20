@@ -26,7 +26,6 @@ app.use(myParser.urlencoded({ extended: true })); //get data in the body
 
 app.post("/process_form", function (request, response) { //process the quantity_form when the POST request is initiated to form a response from the values in the form
     let POST = request.body; // data would be packaged in the body
-    console.log(POST);
 
     if (typeof POST['purchase_submit_button'] != 'undefined') { //if the POST request is not undefined...
         var validAmount = true; // creating a variable 'validAmount' and assuming it will be true
@@ -70,27 +69,33 @@ function isNonNegInt(q, return_errors = false) {
 
 //The following code is taken from Lab 14 Exercise 3
 app.post("/check_login", function (request, response) {// Process login form POST and redirect to checkout if information in login page matches that in the login JSON file, back to login page if not
-    errs = []; //assume no errors at first
+    errs = {}; //assume no errors at first
     var login_username = request.body["username"]; //set var login_username to the username field in login page
+    var login_password = request.body["password"]; //set variable
 
-    if (typeof userdata[login_username] != 'undefined') { // If the username is not undefined...
-        var user_info = userdata[login_username]; //set variable 
-
-        if (user_info.password != request.body["password"]) { //check if password is the same in json data
-            errs.push("Incorrect Password"); //return error message if password is wrong
-        } else { //If the password matches...
-            request.query.username = login_username;// add username on file to query string
-            request.query.name = user_info.name; // add name on file to query string 
-            const userdata_stringified = queryString.stringify(request.query); //converts the data to a string, adds it to the previous query string, and sets it to variable 'stringified'
-            response.redirect('./invoice.html?' + userdata_stringified); // redirect the page to the invoice page with the stringified path in the query string
-            return; //stops function
-        }
-
+    if (typeof userdata[login_username] == 'undefined') { // If the username is not undefined...
+        errs.username = "Incorrect Username"; //If the username does not match, it will return this message 
     } else {
-        errs.push("Incorrect Username"); //If the username does not match, it will return this message 
-    }
+        delete errs.username;
 
-    response.redirect(`./login.html?username=${login_username}&error=%{errs.push} + ${queryString.stringify(request.query)}`); //redirect the user to the login page to re-enter his/her login info with the error message in the query string, but keeping the data from quantity_form
+        if (login_password == 'undefined') {
+            errs.password = "Incorrect Password"; //notify user they must enter password
+        } else if (userdata[login_username]["password"] != login_password) { //check if password is the same in json data
+            errs.password = "Password does not match password on file"; //return error message if password is wrong
+        };
+
+    };
+
+    if (Object.keys(errs).length == 0) { //If no errors...
+        request.query.username = login_username;// add username on file to query string
+        request.query.name = userdata[login_username].name; // add name on file to query string 
+        const userdata_stringified = queryString.stringify(request.query); //converts the data to a string, adds it to the previous query string, and sets it to variable 'stringified'
+        //response.redirect('./invoice.html?' + userdata_stringified); // redirect the page to the invoice page with the stringified path in the query string //commented out because invoice is requested from browser
+        response.json({}); //give response parsed as json object
+    } else {
+        response.json(errs); //otherwise, show error message
+    };
+    //response.redirect(`./login.html?username=${login_username}&error=%{errs.push} + ${queryString.stringify(request.query)}`); //redirect the user to the login page to re-enter his/her login info with the error message in the query string, but keeping the data from quantity_form
 
 });
 
@@ -118,7 +123,6 @@ function isAlphaNumeric(input) {
 
 //The following code was taken from Lab 14 exercise 4
 app.post("/register_user", function (request, response) {
-    console.log(request.query);
     // process a simple register form
     errs = {}; //assume no errors at first
     var registered_username = request.body["username"]; //set var registered_username to the username entered in registration page
