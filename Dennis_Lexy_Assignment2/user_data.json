@@ -1,4 +1,9 @@
 {
+  "1234": {
+    "name": "numbers",
+    "password": "123456",
+    "email": "4@4.35"
+  },
   "itm352": {
     "name": "ITM 352 Grader",
     "password": "grader",
@@ -9,9 +14,84 @@
     "password": "3",
     "email": "lexy@gmail.com"
   },
-  "LexyDenny": {
-    "name": "Lexy",
-    "password": "lexydenny",
-    "email": "lexy@gmail.com"
+  "great": {
+    "name": "great",
+    "password": "123456",
+    "email": "g@gmail.com"
+  },
+  "hellothere": {
+    "name": "ALEXIS DENNIS",
+    "password": "hellothere",
+    "email": "dennislexy@gmail.com"
+  },
+  "newuser": {
+    "name": "ALEXIS DENNIS",
+    "password": "newuser",
+    "email": "dennislexy@gmail.com"
+  },
+  "newer": {
+    "name": "ALEXIS DENNIS",
+    "password": "neweruser",
+    "email": "dennislexy@gmail.com"
+  },
+  "newuser1": {
+    "name": "ALEXIS DENNIS",
+    "password": "newuser",
+    "email": "dennislexy@gmail.com"
+  },
+  "newuser2": {
+    "name": "ALEXIS DENNIS",
+    "password": "newuser",
+    "email": "dennislexy@gmail.com"
+  },
+  "newuser4": {
+    "name": "ALEXIS DENNIS",
+    "password": "newuser",
+    "email": "dennislexy@gmail.com"
+  },
+  "newuser6": {
+    "name": "ALEXIS DENNIS",
+    "password": "newuser",
+    "email": "dennislexy@gmail.com"
+  },
+  "newuser7": {
+    "name": "ALEXIS DENNIS",
+    "password": "newuser",
+    "email": "dennislexy@gmail.com"
+  },
+  "newuser8": {
+    "name": "ALEXIS DENNIS",
+    "password": "newuser",
+    "email": "dennislexy@gmail.com"
+  },
+  "newuser9": {
+    "name": "ALEXIS DENNIS",
+    "password": "newuser",
+    "email": "dennislexy@gmail.com"
+  },
+  "thisisnew": {
+    "name": "ALEXIS DENNIS",
+    "password": "newuser",
+    "email": "dennislexy@gmail.com"
+  },
+  "totallynew": {
+    "name": "ALEXIS DENNIS",
+    "password": "usernew",
+    "email": "dennislexy@gmail.com"
+  },
+  "newest": {
+    "name": "ALEXIS DENNIS",
+    "password": "111111",
+    "email": "dennislexy@gmail.com"
+  },
+  "gretest": {
+    "name": "ALEXIS DENNIS",
+    "password": "000000",
+    "email": "dennislexy@gmail.com"
+  },
+  "again": {
+    "name": "ALEXIS DENNIS",
+    "password": "000000",
+    "email": "dennislexy@gmail.com"
   }
 }

@@ -118,44 +118,45 @@ function isAlphaNumeric(input) {
 
 //The following code was taken from Lab 14 exercise 4
 app.post("/register_user", function (request, response) {
+    console.log(request.query);
     // process a simple register form
-    errs = []; //assume no errors at first
+    errs = {}; //assume no errors at first
     var registered_username = request.body["username"]; //set var registered_username to the username entered in registration page
     var registered_name = request.body["name"]; //set var 'registered_name' to the entered name in register page
 
     //username 
     if (registered_username == '') { //must have a username
-        errs.push("Please enter a username");
+        errs.username = "Please enter a username";
     } else if (registered_username.length < 4 || registered_username.length > 10) { // if username is not between 4 and 10 characters...
-        errs.push("Username must be between 4 and 10 characters"); //error message
+        errs.username = "Username must be between 4 and 10 characters"; //error message
     } else if (isAlphaNumeric(registered_username) == false) { //if username is not only letters and numbers...
-        errs.push("Please only use alphanumeric characters"); //give error message
+        errs.username = "Please only use alphanumeric characters"; //give error message
     } else if (typeof userdata[registered_username] != "undefined") { //check if username already exists
-        errs.push("Username taken"); //return error message if username is taken
+        errs.username = "Username taken"; //return error message if username is taken
     }
 
     //name 
     if (registered_name.length > 30) { //name must be less than 30 characters
-        errs.push("This field cannot be longer than 30 characters")
+        errs.name = "This field cannot be longer than 30 characters";
     }
 
     //password
     if (request.body.password == '') { //must have a password
-        errs.push("Please enter a password");
+        errs.password = "Please enter a password";
     } else if (request.body.password.length <= 5) { //must have a password at least 6 characters long
-        errs.push("Password must be at least 6 characters");
+        errs.password = "Password must be at least 6 characters";
     } else if (request["body"]["password"] != request["body"]["repeat_password"]) {//Check if password is same as the repeat password field
-        errs.push("Passwords don't match"); // let user know if passwords do not match
+        errs.repeat_password = "Passwords don't match"; // let user know if passwords do not match
     }
 
     //email
     if (request.body.email == '') {
-        errs.push("Please enter an email address");
+        errs.email = "Please enter an email address";
     } else if (ValidateEmail(request.body.email) == false) {
-        errs.push("Please enter a valid email address")
+        errs.email = "Please enter a valid email address";
     }
 
-    if (errs.length == 0) { //If no errors...
+    if (Object.keys(errs).length == 0) { //If no errors...
         //set the below variables to what was input by the user on the page
         userdata[registered_username] = {}; //entered username replaces 'username' in json file
         userdata[registered_username].name = request.body.name; //supplies name to be set to 'name' in json file
@@ -166,9 +167,10 @@ app.post("/register_user", function (request, response) {
         request.query.name = registered_name; //fill name in query string as the registered name
         fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the fields filled out by user into the user_data.json file, using 'null, 2' to format the json file with 2 spaces as an indent between objects
         const registration_stringified = queryString.stringify(request.query); //converts the data to a string to add to the previous query string, and sets it to variable 'registration_stringified'
-        response.redirect("./invoice.html?" + registration_stringified); //redirect user to invoice with newly created account info in query string
+        //response.redirect("./invoice.html?" + registration_stringified); //redirect user to invoice with newly created account info in query string //This is commented out because I decided to redirect to the invoice on the browser, not the server
+        response.json({});
     } else {
-        response.end(JSON.stringify(errs)); //otherwise, show error message
+        response.json(errs); //otherwise, show error message
     }
 
 });
