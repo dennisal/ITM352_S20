@@ -74,7 +74,7 @@ app.post("/check_login", function (request, response) {// Process login form POS
     var user_info = userdata[login_username]; //set variable
     var login_password = request.body["password"]; //set variable
 
-    if (typeof userdata[login_username] == 'undefined' || userdata[login_username] ==  '') { // If the username is not undefined...
+    if (typeof userdata[login_username] == 'undefined' || userdata[login_username] == '') { // If the username is not undefined...
         errs.username = '<font color="red">Incorrect Username</font>'; //If the username does not match, it will return this message 
         errs.password = '<font color="red">Incorrect Password</font>'; //If username does not match anything in json file, password cannot match username
     } else if (user_info['password'] != login_password) {
@@ -84,17 +84,15 @@ app.post("/check_login", function (request, response) {// Process login form POS
         delete errs.username; //remove error
         delete errs.password; //rremove error
     }
-    
+
     if (Object.keys(errs).length == 0) { //If no errors...
         request.query.username = login_username;// add username on file to query string
         request.query.name = user_info.name; // add name on file to query string 
         const userdata_stringified = queryString.stringify(request.query); //converts the data to a string, adds it to the previous query string, and sets it to variable 'stringified'
-        //response.redirect('./invoice.html?' + userdata_stringified); // redirect the page to the invoice page with the stringified path in the query string //commented out because invoice is requested from browser
         response.json({}); //give response parsed as json object
     } else {
         response.json(errs); //otherwise, show error message
     };
-    //response.redirect(`./login.html?username=${login_username}&error=%{errs.push} + ${queryString.stringify(request.query)}`); //redirect the user to the login page to re-enter his/her login info with the error message in the query string, but keeping the data from quantity_form
 
 });
 
@@ -166,13 +164,13 @@ app.post("/register_user", function (request, response) {
     } else if (ValidateEmail(request.body.email) == false) { //if does not follow proper email format, give error
         errs.email = '<font color="red">Please Enter A Valid Email Address</font>';
     } else {
-        errs.email =null;
+        errs.email = null;
     }
 
     let result = !Object.values(errs).every(o => o === null); //'result' will return false when each key in 'errs' is null
     console.log(result); //logs 'true' or 'false' for null keys to the console
 
-    if (result == false){ //If no errors...
+    if (result == false) { //If no errors...
         //set the below variables to what was input by the user on the page
         userdata[registered_username] = {}; //entered username replaces 'username' in json file
         userdata[registered_username].name = request.body.name; //supplies name to be set to 'name' in json file
@@ -183,7 +181,6 @@ app.post("/register_user", function (request, response) {
         request.query.name = registered_name; //fill name in query string as the registered name
         fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the fields filled out by user into the user_data.json file, using 'null, 2' to format the json file with 2 spaces as an indent between objects
         const registration_stringified = queryString.stringify(request.query); //converts the data to a string to add to the previous query string, and sets it to variable 'registration_stringified'
-        //response.redirect("./invoice.html?" + registration_stringified); //redirect user to invoice with newly created account info in query string //This is commented out because I decided to redirect to the invoice on the browser, not the server
         response.json({}); //give response parsed as json object
     } else {
         response.json(errs); //otherwise, show error message

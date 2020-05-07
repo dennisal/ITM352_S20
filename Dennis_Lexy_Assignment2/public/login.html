@@ -38,7 +38,7 @@
         //Taken from Assignment1_1Microservice example
         function login_user() { //function to validate the form on the server and return errors (if any) to the browser without leaving the page
             data = new URLSearchParams(new FormData(login_form)); // 'data' is set to the login_form data string
-            
+
             fetch('/check_login' + location.search, //fetch the response from app.post for check_login from the server and attach current location to the query string
                 {
                     method: 'post',
@@ -50,7 +50,7 @@
                 if (response.ok) { //if the response is ok...
 
                     response.json().then(function (errors) { //then make the response 'errors' a json object
-                            
+
                         if (Object.keys(errors).length == 0) { //if no errors...
                             var username = login_form['username'].value;// set variable
                             var name = login_form['name'].value; //set variable
