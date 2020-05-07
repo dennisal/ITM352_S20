@@ -166,7 +166,7 @@ app.post("/register_user", function (request, response) {
     } else {
         errs.email = null;
     }
-
+    //Taken from stackoverflow.com
     let result = !Object.values(errs).every(o => o === null); //'result' will return false when each key in 'errs' is null
     console.log(result); //logs 'true' or 'false' for null keys to the console
 
