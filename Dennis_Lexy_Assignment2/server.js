@@ -150,9 +150,9 @@ app.post("/register_user", function (request, response) {
     }
 
     //email
-    if (request.body.email == '') {
+    if (request.body.email == '') { //must have an email
         errs.email = "Please enter an email address";
-    } else if (ValidateEmail(request.body.email) == false) {
+    } else if (ValidateEmail(request.body.email) == false) { //if does not follow proper email format, give error
         errs.email = "Please enter a valid email address";
     }
 
@@ -168,7 +168,7 @@ app.post("/register_user", function (request, response) {
         fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the fields filled out by user into the user_data.json file, using 'null, 2' to format the json file with 2 spaces as an indent between objects
         const registration_stringified = queryString.stringify(request.query); //converts the data to a string to add to the previous query string, and sets it to variable 'registration_stringified'
         //response.redirect("./invoice.html?" + registration_stringified); //redirect user to invoice with newly created account info in query string //This is commented out because I decided to redirect to the invoice on the browser, not the server
-        response.json({});
+        response.json({}); //give response parsed as json object
     } else {
         response.json(errs); //otherwise, show error message
     }
