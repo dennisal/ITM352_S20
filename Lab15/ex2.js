@@ -9,7 +9,9 @@ app.use(cookieParser());
 
 var session = require('express-session');
 app.use(session({
-    secret: "ITM352 rocks!"
+    secret: "ITM352 rocks!",
+    resave: false,
+    saveUninitialized: true
 }));
 
 
@@ -23,9 +25,9 @@ if (fs.existsSync(user_info_file)) { //use existsSync means it waits until this 
     userdata[username] = {};
     userdata[username].password = 'newpass';
     userdata[username].email = 'newuser@user.com';
-    userdata[username].name = 'The New Guy'; 
+    userdata[username].name = 'The New Guy';
 
-    console.log(userdata["newuser"]["password"]); 
+    console.log(userdata["newuser"]["password"]);
     fs.writeFileSync(user_info_file, JSON.stringify(userdata));//now it is a JSON object
 
     console.log(`${user_info_file} has ${file_stats.size} characters`);
@@ -39,19 +41,19 @@ app.use(myParser.urlencoded({ extended: true }));
 app.get("/set_cookie", function (request, response) {
     console.log('in GET /set_cookie');
     var my_name = "Lexy";
-    response.cookie("your_name", my_name, {maxAge: 5*1000}).send('cookie set'); //sets name = my_name
+    response.cookie("your_name", my_name, { maxAge: 5 * 1000 }).send('cookie set'); //sets name = my_name
 });
 
-app.get('/use_cookie', function(request, response) {
+app.get('/use_cookie', function (request, response) {
     console.log('In GET /use_cookie', request.cookies);
     var the_name = request.cookies["your_name"];
-    response.send('Welcome to the Use Cookie page '+the_name);
+    response.send('Welcome to the Use Cookie page ' + the_name);
 });
 
-app.get('/use_session', function(request, response) {
+app.get('/use_session', function (request, response) {
     console.log('In GET /use_session', request.cookies);
     var the_sess_id = request.session.id;
-    response.send('Welcome, your session ID is '+the_sess_id);
+    response.send('Welcome, your session ID is ' + the_sess_id);
 });
 
 
@@ -59,6 +61,8 @@ app.get("/register", function (request, response) {
     // Give a simple register form
     str = `
 <body>
+<h1>Hello ${session.username}!  You last logged in on ${session.last_login_time}<h1>
+<h1>${request.query["error"]}</h1>
 <form action="/register_user" method="POST">
 <input type="text" name="username" size="40" placeholder="enter username" ><br />
 <input type="password" name="password" size="40" placeholder="enter password"><br />
@@ -69,36 +73,41 @@ app.get("/register", function (request, response) {
 </body>
     `;
     response.send(str);
- });
+});
 
- app.post("/register_user", function (request, response) {
+app.post("/register_user", function (request, response) {
     // process a simple register form
     console.log(request.body);
     username = request.body.username;
     errs = [];
     //check if username is taken
-    if(typeof userdata[username] != 'undefined') {
+    if (typeof userdata[username] != 'undefined') {
         errs.push("username taken");
     } else {
         userdata[username] = {};
     }
     //Check if password is same as the repeat password field
-    if(request["body"]["password"] != request["body"]["repeat_password"]) {
+    if (request["body"]["password"] != request["body"]["repeat_password"]) {
         errs.push("passwords don't match");
     } else {
         userdata[username].password = request["body"]["password"];
     }
 
-    userdata[username] ={};
+    userdata[username] = {};
     userdata[username].password = request.body.password;
     userdata[username].email = request.body.email
 
-    if(errs.length == 0) {
-        fs.writeFileSync(user_info_file, JSON.stringify(userdata));
-        response.end(`New user ${username} registered`);
+    if (errs.length == 0) {
+        session.username = login_username;
+        var theDate = Date.now();
+        session.last_login_time = theDate;
+        response.end(`${login_username} is logged in with data ${JSON.stringify(quantity_str)}`)
+        return;
+        //fs.writeFileSync(user_info_file, JSON.stringify(userdata));
+        //response.end(`New user ${username} registered`);
     } else {
         response.end(JSON.stringify(errs));
     }
- });
- 
+});
+
 app.listen(8080, () => console.log(`listening on port 8080`));
