@@ -16,11 +16,25 @@ var fs = require('fs'); // load and cache fs module
 var user_info_file = './user_data.json'; // set the .json file to the variable 'user_info_file'
 var userdata_file = fs.readFileSync(user_info_file, 'utf-8'); //open file user_data.json and assign it (in a string) to var userdata
 userdata = JSON.parse(userdata_file); //json parse will convert string into json object
+var cookieParser = require('cookie-parser'); //set var cookieParser as the cookie-parser module
+var session = require('express-session'); //session variable is set for session module
+app.use(cookieParser()); //use cookie-parser middleware
 
 app.all('*', function (request, response, next) { //for all request methods...
     console.log(request.method + ' to ' + request.path); //write in the console the request method and its path
     next(); //move on
 });
+
+//The following was taken from stormpath.com
+app.use(session({ //
+    cookieName: 'session',
+    secret: 'eg[isfd-8yF9-7w2315df{}+Ijsli;;to8', //random string to encrypt session ID
+    duration: 30 * 60 * 1000,
+    activeDuration: 5 * 60 * 1000,
+    httpOnly: true,
+    secure: true,
+    ephemeral: true
+}));
 
 app.use(myParser.urlencoded({ extended: true })); //get data in the body
 
