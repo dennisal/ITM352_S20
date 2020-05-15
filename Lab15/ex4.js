@@ -20,7 +20,7 @@ if (fs.existsSync(user_info_file)) { //use existsSync means it waits until this 
 
     var data = fs.readFileSync(user_info_file, 'utf-8'); //open file user_data.json and assigns it (in a string) to variable userdata
     userdata = JSON.parse(data); //json parse will convert string into json object
-    
+
     /*
     username = 'newuser';
     userdata[username] = {};
@@ -61,12 +61,12 @@ app.get('/use_session', function (request, response) {
 
 app.get("/login", function (request, response) { //get to login page
     console.log(request.query); // print out query string
-    if(typeof request.cookies['username'] != 'undefined') {
+    if (typeof request.cookies['username'] != 'undefined') {
         str = `Welcome ${request.cookies['username']}!`;
     } else {
-    quantity_str = request.query;
-    // Give a simple login form
-    str = `
+        quantity_str = request.query;
+        // Give a simple login form
+        str = `
 <body>
 <h1>Hello ${session.username}! You last logged in on ${session.last_login_time}</h1>
 <h1>${request.query["error"]}</h1>
@@ -77,8 +77,8 @@ app.get("/login", function (request, response) { //get to login page
 </form>
 </body>
     `;
-    response.send(str);
-}
+        response.send(str);
+    }
 });
 
 app.post("/check_login", function (request, response) {
@@ -96,15 +96,15 @@ app.post("/check_login", function (request, response) {
             var theDate = Date.now();
             session.last_login_time = theDate;
 
-        response.cookie('username', login_username).end(`${login_username} is logged in with data ${JSON.stringify(quantity_str)} on ${theDate}`); //responds to user login by giving a cookie 
-        return; 
-    } 
-} else {
+            response.cookie('username', login_username).end(`${login_username} is logged in with data ${JSON.stringify(quantity_str)} on ${theDate}`); //responds to user login by giving a cookie 
+            return;
+        }
+    } else {
         err_str = `bad_username`;
-}
-response.redirect('./login?username}=${login_username}&error=%{err_str}');
+    }
+    response.redirect('./login?username}=${login_username}&error=%{err_str}');
 });
- 
+
 app.get("/register", function (request, response) {
     // Give a simple register form
     str = `

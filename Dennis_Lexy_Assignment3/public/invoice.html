@@ -1,6 +1,6 @@
 <!--
-    Copied from Lexy Dennis' Assignment 1: Invoice page
-    Lexy Dennis' Assignment 2 Invoice page
+    Copied from Lexy Dennis' Assignment 2: Invoice page
+    Lexy Dennis' Assignment 3 Invoice page
 -->
 
 <script src="./services_data.js" type="text/javascript"></script>
@@ -27,7 +27,7 @@
 
    /* } else {
         window.location.href = './index.html'; // if there is nothing entered in any of the textboxes, send the user back to the index.html page to select tour amounts
-        alert('Please re-select your tours and login again'); //notice to re-enter tour amounts
+        alert('Please re-select your tours and log in again'); //notice to re-enter tour amounts
    */}
 
     if (params.has('username')) { //if query string has info about user...
@@ -58,18 +58,17 @@
 
     <script> // Above the invoice, thank the user personally by his/her name
 
-        if (name != 'undefined' && name != '') {
+        if (typeof cookies['name'] != 'undefined') { // if there is a cookie, address the user by their name, or if unavailable, by their username
 
             document.write(`
-                <h3 align="center">Thank you for your purchase, ${name}!<br />A verification email with the following invoice has been sent to ${username.email}</h3><br />
+                <h3 align="center">Thank you for your purchase, ${cookies['name']}!<br />A verification email with the following invoice has been sent to ${cookies['email']}</h3><br />
             `)
 
         } else {
 
             document.write(`
-                <h3 align="center">Thank you for your purchase, ${username}!<br />A verification email with the following invoice has been sent to </h3><br />
+                <h3 align="center">Thank you for your purchase, ${cookies['username']}!<br />A verification email with the following invoice has been sent to ${cookies['email']}</h3><br />
             `)
-
         }
 
     </script>
@@ -180,5 +179,15 @@
     </table>
 
 </body>
+
+<!-- 
+    Logout button will logout user and erase session
+    The following purchase button was copied from Lexy Dennis' Assignment 1 index.html page
+-->
+    <ul class="actions" align="center">
+        <li>
+            <input type="submit" value='Logout' class="button big" name="logout">
+        </li>
+    </ul>
 
 </html>

@@ -34,12 +34,20 @@
     </form>
 
     <script>
+        //taken from stackoverflow.com
+        function GoBackWithRefresh(event) { //function to go back to previous page with a refresh
+            if ('referrer' in document) {
+                window.location = document.referrer;
+            } else {
+                window.history.back();
+            }
+        }
 
         //Taken from Assignment1_1Microservice example
         function login_user() { //function to validate the form on the server and return errors (if any) to the browser without leaving the page
             data = new URLSearchParams(new FormData(login_form)); // 'data' is set to the login_form data string
 
-            fetch('/check_login' + location.search, //fetch the response from app.post for check_login from the server and attach current location to the query string
+            fetch('/check_login', //fetch the response from app.post for check_login from the server
                 {
                     method: 'post',
                     body: data,
@@ -51,10 +59,11 @@
 
                     response.json().then(function (errors) { //then make the response 'errors' a json object
 
-                        if (Object.keys(errors).length == 0) { //if no errors...
-                            var username = login_form['username'].value;// set variable
-                            var name = login_form['name'].value; //set variable
-                            window.location.href = './invoice.html' + location.search + '&username=' + username + '&name=' + name; //get invoice.html if data is good with the query string
+                        if (Object.keys(errors).length == 0) { //if no errors..
+                            document.cookie; //gives a cookie to user
+                            response.json({}); //give response parsed as json object
+
+                            response.redirect(GoBackWithRefresh()); //redirect to the last-visited page
                         } else {
 
                             for (errorId in errors) { // if there are errors associated with the ID message span...

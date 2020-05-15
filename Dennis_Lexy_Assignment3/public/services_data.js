@@ -6,25 +6,25 @@ Lexy Dennis' Assignment 2 service data
 var services_array = [
   {
     "community": "Madrid",
-    "description": "Explore Day Tours in Spain's Bustling Capital",
+    "description": "Day Tours in Spain's Bustling Capital",
     "image": "./photos/madridCommunity.jpg"
   },
   {
     "community": "Andalusia",
-    "description": "Explore Day Tours in Spain's Stunning Southern Gem",
+    "description": "Day Tours in Spain's Stunning Southern Gem",
     "image": "./photos/andalusia.jpg"
   },
   {
     "community": "Catalonia",
-    "description": "Explore Day Tours in Spain's Vibrant Seaside Community",
+    "description": "Day Tours in Spain's Vibrant Seaside Community",
     "image": "./photos/catalonia.jpg"
   },
   {
     "community": "Valencia",
-    "description": "Explore Day Tours in the Birthplace of Paella",
+    "description": "Day Tours in the Birthplace of Paella",
     "image": "./photos/valenciaCommunity.jpg"
   }
-]
+];
 
 var madrid_tours = [
   {
@@ -48,7 +48,7 @@ var madrid_tours = [
     "price": 65.00,
     "image": "./photos/escorial.jpg"
   }
-]
+];
 
 var andalusia_tours = [
   {
@@ -72,7 +72,7 @@ var andalusia_tours = [
     "price": 100.00,
     "image": "./photos/ronda.jpg"
   },
-]
+];
 
 var catalonia_tours = [
   {
@@ -96,7 +96,7 @@ var catalonia_tours = [
     "price": 30.00,
     "image": "./photos/montserrat.jpg"
   }
-]
+];
 
 var valencia_tours = [
   {
@@ -120,8 +120,15 @@ var valencia_tours = [
     "price": 10.00,
     "image": "./photos/valencia.jpg"
   }
-]
+];
+
+var allServices = {
+  "Madrid": madrid_tours, 
+  "Andalusia": andalusia_tours,
+  "Catalonia": catalonia_tours,
+  "Valencia": valencia_tours
+}
 
 if (typeof module != 'undefined') {
-  module.exports.services_array = services_array;
+  module.exports.allServices = allServices;
 }

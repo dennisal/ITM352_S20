@@ -5,36 +5,50 @@
 
 <script src="./services_data.js" type="text/javascript"></script>
 <!-- uses get request for the data in services_data.js -->
-<script src="../user_data.json" type="json"></script>
-<!-- get user's name to personalize checkout -->
 
 <script>
 
-    let params = (new URL(document.location)).searchParams; //this is the query string
+    var cart = sessionStorage; //sets 'cart' to the local session
     var quantities = []; //create empty variable 'quantities'
 
-    // processing the invoice from the data entered in the quantity_form
-    if (params.has('purchase_submit_button')) { // loop that pulls information from the quantity_form in index.html
+    if (cart.length == 0) { //if cart is not empty...
+        history.go(-1); // if there is nothing entered in any of the textboxes, send the user back to the page they were at previously to select tour amounts
+        alert('Shopping Cart is Empty! Please Select Tour Amounts'); //notice to renter tour amounts
+    };
 
-        for (i = 0; i < services_array.length; i++) { //for any given tour...
-
-            if (params.has(`quantity_textbox${i}`)) { // if there is input in the quantity_textbox...
-                qty = params.get(`quantity_textbox${i}`); //get the information and put it into the variable 'qty'
-                quantities[i] = qty; //set variable 'quantities' for any given tour equal to the value of its corresponding quantity_textbox
+    //function taken from w3 schools
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
             }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    };
 
-        };
+    function addItem(thisRowQty) { //function to increase that row's tour amount by 1
+        sessionStorage.getItem(qty) = thisRowQty;
+        thisRowQty += 1;
+        return thisRowQty;
+    };
 
-   /* } else {
-        window.location.href = './index.html'; // if there is nothing entered in any of the textboxes, send the user back to the index.html page to select tour amounts
-        alert('Please re-select your tours and login again'); //notice to re-enter tour amounts
-   */}
+    //taken from stackoverflow.com
+    function GoBackWithRefresh(event) { //function to refresh page
+    if ('referrer' in document) {
+        window.location = document.referrer;
+    } else {
+        window.history.back();
+        }
+    };
 
-    if (params.has('username')) { //if query string has info about user...
-        var name = params.get('name'); //get the name of the user and assign it to var 'name'
-        var username = params.get('username'); //get the user's username from the query string and assign it to var 'username'
-    }
-
+    
 </script>
 
 <!-- Copied from order_page_Ex4.html in Lab13 -->
@@ -57,27 +71,24 @@
 <body>
 
     <script> // Above the invoice, thank the user personally by his/her name
-
-        if (name != 'undefined' && name != '') {
-
+        var theUser = getCookie('username');
+        if (theUser != '') {
             document.write(`
-                <h3 align="center">Hello, ${name}!<br />Please review your order below</h3><br />
+                <h3 align="center">Hello, ${theUser}! Please review your shopping cart order below</h3><br />
             `)
-
         } else {
-
             document.write(`
-                <h3 align="center">Hello, ${username}!<br />Please review your order below</h3><br />
+                <h3 align="center">You are not logged in: Click <a href="login.html">here</a> to log in</h3>
             `)
-
         }
+            
 
     </script>
 
     <!-- Table template taken from Invoice1_1 as displayed in the Assignment 1 directions page -->
-    <table align="center" border=2>
+    <table align="center">
 
-        <tbody>
+        <tbody align="center">
 
             <tr>
                 <!-- This row contains the column headers-->
@@ -97,99 +108,32 @@
                     <h3>extended price</h3>
                 </th>
 
-                <th style="text-align: center;" width="43%">
-                    <h3>Modify</h3>
-                </th>
-
             </tr>
 
             <script> //The script will get the information entered on the home page to input into the table
 
                 subtotal = 0; //subtotal starts off as 0
+                for (service in allServices)
+                    for (i = 0; i < allServices[service].length; i++) {
 
-                for (i = 0; i < madrid_tours.length; i++) {
+                        qty = cart[`${service}${i}`];
+                        if (qty > 0) { //if there is a quantity entered in the textbox ...
+                            extended_price = qty * allServices[service][i].price //equation for extended price
+                            subtotal += extended_price; //adding extended price for each tour to the subtotal
 
-                    if (quantities[i] > 0) { //if there is a quantity entered in the textbox ...
-                        extended_price = quantities[i] * madrid_tours[i].price //equation for extended price
-                        subtotal += extended_price; //adding extended price for each tour to the subtotal
-
-                        document.write(`
+                            document.write(`
 
                             <tr>
-                                <td align="center" width="43%"><font color="#000000">${madrid_tours[i].tour}</font></td>
-                                <td align="center" width="11%"><font color="#000000">${quantities[i]}</font></td>
-                                <td align="center" width="13%"><font color="#000000">\$${madrid_tours[i].price}</font></td>
+                                <td align="center" width="43%"><font color="#000000">${allServices[service][i].tour}</font></td>
+                                <td align="center" width="11%"><font color="#000000"><center>${qty}</center></font>
+                                    <input type="button" value="+1" onclick="addItem(${qty})"><input type="button" value="-1" onclick="cart.removeItem(${qty})"></td>
+                                <td align="center" width="13%"><font color="#000000">\$${allServices[service][i].price}</font></td>
                                 <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
-                                <td align="center" width="54%"><input type="button" value="Modify Amount" onclick="ModifyItem()">
-                                <input type="button" value="Remove" onclick="RemoveItem()"></td>
+                                
                             </tr>
                         `);
-                    }
-                };
-
-                for (i = 0; i < andalusia_tours.length; i++) {
-
-                    if (quantities[i] > 0) { //if there is a quantity entered in the textbox ...
-                        extended_price = quantities[i] * andalusia_tours[i].price //equation for extended price
-                        subtotal += extended_price; //adding extended price for each tour to the subtotal
-
-                        document.write(`
-                            <tr>
-                                <td align="center" width="43%"><font color="#000000">${andalusia_tours[i].tour}</font></td>
-                                <td align="center" width="11%"><font color="#000000">${quantities[i]}</font></td>
-                                <td align="center" width="13%"><font color="#000000">\$${andalusia_tours[i].price}</font></td>
-                                <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
-                                <td align="center" width="54%"><input type="button" value="Modify Amount" onclick="ModifyItem()">
-                                <input type="button" value="Remove" onclick="RemoveItem()"></td>
-                            </tr>
-                        `);
-                    }
-                };
-
-                for (i = 0; i < catalonia_tours.length; i++) {
-
-                    if (quantities[i] > 0) { //if there is a quantity entered in the textbox ...
-                        extended_price = quantities[i] * catalonia_tours[i].price //equation for extended price
-                        subtotal += extended_price; //adding extended price for each tour to the subtotal
-
-                        document.write(`
-                            < tr >
-                                <td align="center" width="43%"><font color="#000000">${catalonia_tours[i].tour}</font></td>
-                                <td align="center" width="11%"><font color="#000000">${quantities[i]}</font></td>
-                                <td align="center" width="13%"><font color="#000000">\$${catalonia_tours[i].price}</font></td>
-                                <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
-                                <td align="center" width="54%"><input type="button" value="Modify Amount" onclick="ModifyItem()">
-                                <input type="button" value="Remove" onclick="RemoveItem()"></td>
-                            </tr >
-                        `);
-                    }
-                };
-
-                for (i = 0; i < valencia_tours.length; i++) {
-
-                    if (quantities[i] > 0) { //if there is a quantity entered in the textbox ...
-                        extended_price = quantities[i] * valencia_tours[i].price //equation for extended price
-                        subtotal += extended_price; //adding extended price for each tour to the subtotal
-
-                        document.write(`
-                            <tr>
-                                <td align="center" width="43%"><font color="#000000">${valencia_tours[i].tour}</font></td>
-                                <td align="center" width="11%"><font color="#000000">${quantities[i]}</font></td>
-                                <td align="center" width="13%"><font color="#000000">\$${valencia_tours[i].price}</font></td>
-                                <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
-                                <td align="center" width="54%"><input type="button" value="Modify Amount" onclick="ModifyItem()">
-                                <input type="button" value="Remove" onclick="RemoveItem()"></td>
-                            </tr>
-                        `);
-                    }
-                };
-
-                // Compute tax
-                var tax_rate = 0.0575;
-                var tax = tax_rate * subtotal;
-
-                // Compute grand total
-                var total = subtotal + tax;
+                        }
+                    };
 
             </script>
 
@@ -198,42 +142,18 @@
                     Creates row of space with "clear all" button
                     Code for clear all button taken from smashingmagazine.com
                 -->
-                <td align="center" colspan="4" width="100%"><input type="button" value="Clear All" onclick="ClearAll()"></td>
+                <td align="center" colspan="4" width="100%"><input type="button" value="Clear All"
+                        onclick="cart.clear()" onkeyup="window.location.replace('./cart.html')">
+                </td>
 
             </tr>
 
             <tr>
                 <!-- Sub-total row -->
-                <td style="text-align: center;" colspan="3" width="67%"><b>SUB-TOTAL</b></td>
+                <td style="text-align: center;" colspan="3" width="67%"><h3 style=color:tomato>Total</h3></td>
 
-                <td align="center" width="54%"><b>$
-                        <script>document.write(subtotal);</script></b> <!-- input calculated subtotal amount -->
-                </td>
-
-            </tr>
-
-            <tr>
-                <!-- Tax row -->
-                <td style="text-align: center;" colspan="3" width="67%"><b><span>TAX @
-                            <script>document.write(100 * tax_rate);</script>%</span></b>
-                </td>
-
-                <td align="center" width="54%"><b>$
-                        <script>document.write(tax.toFixed(2));</script></b>
-                    <!-- Input calculated amount for tax, to two decimal places-->
-                </td>
-
-            </tr>
-
-            <tr>
-                <!-- Total row -->
-                <td style="text-align: center;" colspan="3" width="67%">
-                    <h3 style=color:tomato>Total</h3>
-                </td>
-
-                <td width="54%"><strong style=color:tomato>$
-                        <script>document.write(total.toFixed(2));</script></strong>
-                    <!-- Input calculated total, to two decimal places -->
+                <td align="center" width="54%"><strong style=color:tomato>$
+                        <script>document.write(subtotal);</script></strong> <!-- input calculated subtotal amount -->
                 </td>
 
             </tr>
@@ -244,14 +164,14 @@
 
 </body>
 
-    <!-- 
+<!-- 
         Purchase button that will redirect to invoice
         The following purchase button was copied from Lexy Dennis' Assignment 1 index.html page
     -->
-    <ul class="actions" align="center">
-        <li>
-            <input type="submit" value='Purchase' class="button big" name="purchase_submit_button">
-        </li>
-    </ul>
+<ul class="actions" align="center">
+    <li>
+        <input type="submit" value='Purchase' class="button big" name="purchase_submit_button" onclick="checkCart()">
+    </li>
+</ul>
 
 </html>

@@ -18,6 +18,7 @@ var userdata_file = fs.readFileSync(user_info_file, 'utf-8'); //open file user_d
 userdata = JSON.parse(userdata_file); //json parse will convert string into json object
 var cookieParser = require('cookie-parser'); //set var cookieParser as the cookie-parser module
 var session = require('express-session'); //session variable is set for session module
+
 app.use(cookieParser()); //use cookie-parser middleware
 
 app.all('*', function (request, response, next) { //for all request methods...
@@ -25,27 +26,36 @@ app.all('*', function (request, response, next) { //for all request methods...
     next(); //move on
 });
 
-//The following was taken from stormpath.com
+//The following was taken from stormpath.com and Lab15 ex4.js
 app.use(session({ //
-    cookieName: 'session',
     secret: 'eg[isfd-8yF9-7w2315df{}+Ijsli;;to8', //random string to encrypt session ID
-    duration: 30 * 60 * 1000,
-    activeDuration: 5 * 60 * 1000,
-    httpOnly: true,
-    secure: true,
-    ephemeral: true
+    resave: true, //save session
+    saveUninitialized: false, //forget session after user is done
+    httpOnly: true, //prevents browser js from accessing cookies
+    secure: true, //ensures cookies are only used over HTTPS
+    ephemeral: true // deletes cookie when browser is closed
 }));
+
+function saveTour(theTextbox) { //Function to save tour amount to cart
+    if (isNonNegInt(theTextbox.value) == false) { //if there are no errors...
+    quantity_form[`quantity_textbox${i}`].value = tourAmount; //make value entered tourAmount
+    session.user.tourAmount = tourAmount; //save this tour amount to this user's session
+    document.getElementById(`cart${i}`).innerHTML = 'Added to Cart!'; //let user know tour was added
+    } else {
+        document.getElementById(`cart${i}`).innerHTML = 'Cannot Add to Cart: Please Enter Valid Tour Amount'; //let user know to input actual amount
+    };
+};
 
 app.use(myParser.urlencoded({ extended: true })); //get data in the body
 
 app.post("/process_form", function (request, response) { //process the quantity_form when the POST request is initiated to form a response from the values in the form
     let POST = request.body; // data would be packaged in the body
 
-    if (typeof POST['purchase_submit_button'] != 'undefined') { //if the POST request is not undefined...
+    if (typeof POST['addTourtoCart${i}'] != 'undefined') { //if the POST request is not undefined...
         var validAmount = true; // creating a variable 'validAmount' and assuming it will be true
         var amount = false; // creating a variable 'amount' and assuming it will be false
 
-        for (i = 0; i < services_array.length; i++) { //for any given tour...
+        for (i = 0; i < `${(services_array[`community`][i]) + _tours}`.length; i++) { //for any given tour in any community array...
             qty = POST[`quantity_textbox${i}`]; //set variable 'qty' to the value in quantity_textbox
 
             if (qty > 0) {
@@ -97,12 +107,15 @@ app.post("/check_login", function (request, response) {// Process login form POS
     } else {
         delete errs.username; //remove error
         delete errs.password; //rremove error
-    }
+    };
 
     if (Object.keys(errs).length == 0) { //If no errors...
-        request.query.username = login_username;// add username on file to query string
-        request.query.name = user_info.name; // add name on file to query string 
-        const userdata_stringified = queryString.stringify(request.query); //converts the data to a string, adds it to the previous query string, and sets it to variable 'stringified'
+        //the following was taken from Lab15 ex4.js
+        session.username = login_username; //add username to user's session
+        var theDate = Date.now(); //sets the time of login
+        session.last_login_time = theDate; //remember this login time in session
+        var login_name = user_info['name']; //set login_name to the name saved for user
+        response.cookie('username', login_username, 'name', login_name); //gives a cookie to user
         response.json({}); //give response parsed as json object
     } else {
         response.json(errs); //otherwise, show error message
@@ -190,17 +203,23 @@ app.post("/register_user", function (request, response) {
         userdata[registered_username].name = request.body.name; //supplies name to be set to 'name' in json file
         userdata[registered_username].password = request.body.password; //supplies password to be set to 'password' in json file
         userdata[registered_username].email = request.body.email; //supplies email to be set to 'email' in json file
-        //set the values to be displayed in query string
-        request.query.username = registered_username; //fill username in query as the registered username
-        request.query.name = registered_name; //fill name in query string as the registered name
         fs.writeFileSync(user_info_file, JSON.stringify(userdata, null, 2));//input the fields filled out by user into the user_data.json file, using 'null, 2' to format the json file with 2 spaces as an indent between objects
-        const registration_stringified = queryString.stringify(request.query); //converts the data to a string to add to the previous query string, and sets it to variable 'registration_stringified'
+        //Set cookie for new user
+        response.cookie("username", registered_username); //sets username = registered_username in cookie
+        response.cookie("name", registered_name); //remembers name in cookie
+        response.cookie("email", request.body.email); //remembers email in cookie
         response.json({}); //give response parsed as json object
     } else {
         response.json(errs); //otherwise, show error message
     }
 
 });
+
+//The below code was taken from stormpath.com
+app.post('/logout', function(request, response) { //on logout...
+    request.session.reset(); //reset session (clear it)
+    response.redirect('/index.html'); //and redirect user to index page
+  });
 
 app.use(express.static('./public')); // root in the 'public' directory so that express will serve up files from here
 app.listen(8080, () => console.log(`listening on port 8080`)); //run the server on port 8080 and write it in the console
