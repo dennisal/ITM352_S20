@@ -48,7 +48,16 @@
         }
     };
 
-    
+    function checkCart() {
+        if (cart.length == 0) {
+            window.location.reload();
+        } else if (theUser == '') {
+            alert(`Please log in before viewing cart`);
+            window.location.href = './login.html';
+        } else {
+            window.location.href = './invoice.html';
+        }
+    }
 </script>
 
 <!-- Copied from order_page_Ex4.html in Lab13 -->
