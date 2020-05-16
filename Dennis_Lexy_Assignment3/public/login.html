@@ -34,14 +34,21 @@
     </form>
 
     <script>
+
         //taken from stackoverflow.com
-        function GoBackWithRefresh(event) { //function to go back to previous page with a refresh
-            if ('referrer' in document) {
-                window.location = document.referrer;
+        function GoBackWithRefresh(event) { //function to go to previous page
+            var past = document.referrer;
+            var pastPage = past.split('/').pop(); //get value of string after '/' in past page query string
+
+            if (pastPage != 'login.html' && pastPage != 'register.html') { //if the past page is the login, registration, or cart...
+                window.location = past;
+            } else if (pastPage == 'login.html' && pastPage == 'register.html') {
+                window.history.go(-2); //go back 2 pages instead of to that last page
             } else {
-                window.history.back();
+                window.location.href = './index.html'; //otherwise go to home page
             }
-        }
+
+        };
 
         //Taken from Assignment1_1Microservice example
         function login_user() { //function to validate the form on the server and return errors (if any) to the browser without leaving the page

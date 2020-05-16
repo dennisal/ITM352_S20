@@ -10,31 +10,41 @@
 
 <script>
 
-    let params = (new URL(document.location)).searchParams; //this is the query string
+var cart = sessionStorage; //sets 'cart' to the local session
     var quantities = []; //create empty variable 'quantities'
 
-    // processing the invoice from the data entered in the quantity_form
-    if (params.has('purchase_submit_button')) { // loop that pulls information from the quantity_form in index.html
+    if (cart.length == 0) { //if cart is not empty...
+        history.go(-1); // if there is nothing entered in any of the textboxes, send the user back to the page they were at previously to select tour amounts
+        alert('Shopping Cart is Empty! Please Select Tour Amounts'); //notice to renter tour amounts
+    };
 
-        for (i = 0; i < services_array.length; i++) { //for any given tour...
-
-            if (params.has(`quantity_textbox${i}`)) { // if there is input in the quantity_textbox...
-                qty = params.get(`quantity_textbox${i}`); //get the information and put it into the variable 'qty'
-                quantities[i] = qty; //set variable 'quantities' for any given tour equal to the value of its corresponding quantity_textbox
+    //function taken from w3 schools
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
             }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    };
 
-        };
-
-   /* } else {
-        window.location.href = './index.html'; // if there is nothing entered in any of the textboxes, send the user back to the index.html page to select tour amounts
-        alert('Please re-select your tours and log in again'); //notice to re-enter tour amounts
-   */}
-
-    if (params.has('username')) { //if query string has info about user...
-        var name = params.get('name'); //get the name of the user and assign it to var 'name'
-        var username = params.get('username'); //get the user's username from the query string and assign it to var 'username'
+    function checkCart() {
+        if (cart.length == 0) {
+            window.location.reload();
+        } else if (theUser == '') {
+            alert(`Please log in before viewing cart`);
+            window.location.href = './login.html';
+        } else {
+            window.location.href = './invoice.html';
+        }
     }
-
 </script>
 
 <!-- Copied from order_page_Ex4.html in Lab13 -->
@@ -57,19 +67,19 @@
 <body>
 
     <script> // Above the invoice, thank the user personally by his/her name
-
-        if (typeof cookies['name'] != 'undefined') { // if there is a cookie, address the user by their name, or if unavailable, by their username
-
+        var theUser = getCookie('name'); //theUser is the cookie for user's name
+        var theUsername = getCookie('username'); //sets variable for username in cookie
+        var email = getCookie('email'); //sets variable 'email'
+        if (theUser == '' && theUsername != '') { //if there is not a name for user but there is a username...
             document.write(`
-                <h3 align="center">Thank you for your purchase, ${cookies['name']}!<br />A verification email with the following invoice has been sent to ${cookies['email']}</h3><br />
+                <h3 align="center">Thank you for your purchase, ${theUsername}!<br />An email has been sent to ${email}</h3>
             `)
-
-        } else {
-
+        } else if (theUser != '') {
             document.write(`
-                <h3 align="center">Thank you for your purchase, ${cookies['username']}!<br />A verification email with the following invoice has been sent to ${cookies['email']}</h3><br />
+                <h3 align="center">Thank you for your purchase, ${theUser}!<br />An email has been sent to ${email}</h3>
             `)
-        }
+        };
+
 
     </script>
 
@@ -184,10 +194,10 @@
     Logout button will logout user and erase session
     The following purchase button was copied from Lexy Dennis' Assignment 1 index.html page
 -->
-    <ul class="actions" align="center">
-        <li>
-            <input type="submit" value='Logout' class="button big" name="logout">
-        </li>
-    </ul>
+<ul class="actions" align="center">
+    <li>
+        <input type="submit" value='Logout' class="button big" name="logout">
+    </li>
+</ul>
 
 </html>

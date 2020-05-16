@@ -1,8 +1,13 @@
 {
+  "1111": {
+    "name": "1111",
+    "password": "111111",
+    "email": "1@1.co"
+  },
   "itm352": {
     "name": "ITM 352 Grader",
     "password": "grader",
-    "email": ""
+    "email": "grader@hawaii.edu"
   },
   "Lexy": {
     "name": "Lexy",
@@ -13,5 +18,55 @@
     "name": "sharon",
     "password": "999999",
     "email": "sharon@hawaii.edu"
+  },
+  "dennisal": {
+    "name": "Lexy",
+    "password": "286370",
+    "email": "dennisal@hawaii.edu"
+  },
+  "newer": {
+    "name": "New",
+    "password": "testing",
+    "email": "dennisal@hawaii.edu"
+  },
+  "newwww": {
+    "name": "meagain",
+    "password": "111111",
+    "email": "dennisal@hawaii.edu"
+  },
+  "meagain": {
+    "name": "meagain",
+    "password": "111111",
+    "email": "dennisal@hawaii.edu"
+  },
+  "Meagan": {
+    "name": "meagain",
+    "password": "111111",
+    "email": "dennisal@hawaii.edu"
+  },
+  "Meagan1": {
+    "name": "meagain",
+    "password": "111111",
+    "email": "dennisal@hawaii.edu"
+  },
+  "meagain2": {
+    "name": "meagan",
+    "password": "000000",
+    "email": "new@chehoo.com"
+  },
+  "mrcool": {
+    "name": "cool",
+    "password": "999999",
+    "email": "co@co.co"
+  },
+  "denny": {
+    "name": "lexyyy",
+    "password": "999999",
+    "email": "s@s.co"
+  },
+  "deni": {
+    "name": "lex",
+    "password": "000000",
+    "email": "23@12.sd"
   }
 }

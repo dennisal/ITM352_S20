@@ -48,12 +48,49 @@
     </form>
 
     <script>
+        //the following is taken from stackoverflow.com
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+        function eraseCookie(name) {
+            document.cookie = name + '=; Max-Age=-99999999;';
+        }
+
+        //taken from stackoverflow.com
+        function GoBackWithRefresh(event) { //function to go to previous page
+            var past = document.referrer;
+            var pastPage = past.split('/').pop(); //get value of string after '/' in past page query string
+
+            if (pastPage != 'login.html' && pastPage != 'register.html') { //if the past page is the login, registration, or cart...
+                window.location = past;
+            } else if (pastPage == 'login.html' && pastPage == 'register.html') {
+                window.history.go(-2); //go back 2 pages instead of to that last page
+            } else {
+                window.location.href = './index.html'; //otherwise go to home page
+            }
+        };
 
         //Taken from Assignment1_1Microservice example
         function register_user() { //function to validate the form on the server and return errors (if any) to the browser without leaving the page
             data = new URLSearchParams(new FormData(registration_form)); // 'data' is set to the registration_form data string
 
-            fetch('/register_user' + location.search, //fetch the response from app.post for register_user from the server and attach current location to the query string
+            fetch('/register_user', //fetch the response from app.post for register_user from the server
                 {
                     method: 'post',
                     body: data,
@@ -66,9 +103,9 @@
                     response.json().then(function (errors) { //then make the response 'errors' a json object
 
                         if (Object.keys(errors).length == 0) { //if no errors...
-                            var username = registration_form['username'].value;// set variable
-                            var name = registration_form['name'].value; //set variable
-                            window.location.href = './invoice.html' + location.search + '&username=' + username + '&name=' + name; //get invoice.html if data is good with the query string
+                            document.cookie;
+
+                            response.redirect(GoBackWithRefresh()); //redirect to last-visited page
                         } else {
 
                             for (errorId in errors) { // if there are errors associated with the error message span...

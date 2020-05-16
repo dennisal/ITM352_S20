@@ -19,9 +19,9 @@
     //function taken from w3 schools
     function getCookie(cname) {
         var name = cname + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
+        var decodedCookie = decodeURIComponent(document.cookie); //decode the cookie
+        var ca = decodedCookie.split(';'); //split up string by ';'
+        for (var i = 0; i < ca.length; i++) { //split up by names
             var c = ca[i];
             while (c.charAt(0) == ' ') {
                 c = c.substring(1);
@@ -33,18 +33,34 @@
         return "";
     };
 
-    function addItem(thisRowQty) { //function to increase that row's tour amount by 1
-        sessionStorage.getItem(qty) = thisRowQty;
-        thisRowQty += 1;
-        return thisRowQty;
+    function addItem(theService, theIndex) { //function to increase that row's tour amount by 1
+        var thisRowQty = parseInt(sessionStorage.getItem(`${theService}${theIndex}`)); //parse it
+        thisRowQty += 1; //add 1 to number
+        sessionStorage.setItem(`${theService}${theIndex}`, thisRowQty); //set the new value to session
+        window.location.reload(); //reload page to show changes in cart
+    };
+
+    function removeItem(theService, theIndex) { //function to increase that row's tour amount by 1
+        var thisRowQty = parseInt(sessionStorage.getItem(`${theService}${theIndex}`)); //parse it
+        if (thisRowQty > 0) { //if it is greater than 0, enable subtract to avoid neg values
+            thisRowQty -= 1; //subtract 1
+            sessionStorage.setItem(`${theService}${theIndex}`, thisRowQty); //add new value to session
+            window.location.reload(); //reload page to show changes
+        }
+
     };
 
     //taken from stackoverflow.com
-    function GoBackWithRefresh(event) { //function to refresh page
-    if ('referrer' in document) {
-        window.location = document.referrer;
-    } else {
-        window.history.back();
+    function GoBackWithRefresh(event) { //function to go to previous page
+        var past = document.referrer;
+        var pastPage = past.split('/').pop(); //get value of string after '/' in past page query string
+
+        if (pastPage != 'login.html' && pastPage != 'register.html' && pastPage != 'cart.html') { //if the past page is the login, registration, or cart...
+            window.location = past;
+        } else if (pastPage == 'login.html' && pastPage == 'register.html' && pastPage == 'cart.html') {
+            window.history.go(-2); //go back 2 pages instead of to that last page
+        } else {
+            window.location.href = './index.html'; //otherwise go to home page
         }
     };
 
@@ -58,6 +74,7 @@
             window.location.href = './invoice.html';
         }
     }
+
 </script>
 
 <!-- Copied from order_page_Ex4.html in Lab13 -->
@@ -80,18 +97,18 @@
 <body>
 
     <script> // Above the invoice, thank the user personally by his/her name
-        var theUser = getCookie('username');
-        if (theUser != '') {
+        var theUser = getCookie('name'); //theUser is the cookie for user's name
+        var theUsername = getCookie('username'); //sets variable for username in cookie
+        if (theUsername != '') { //if there is not a name for user but there is a username...
             document.write(`
-                <h3 align="center">Hello, ${theUser}! Please review your shopping cart order below</h3><br />
+                <h3 align="center">Hello, ${theUsername}! Please review your shopping cart order below</h3>
+                <h6 align="center">Not ${theUsername}? Please log in <a href="login.html" >here</a></h6><br />
             `)
-        } else {
+        } else { //if not a cookie for user, prompt to log in
             document.write(`
                 <h3 align="center">You are not logged in: Click <a href="login.html">here</a> to log in</h3>
             `)
-        }
-            
-
+        };
     </script>
 
     <!-- Table template taken from Invoice1_1 as displayed in the Assignment 1 directions page -->
@@ -125,7 +142,7 @@
                 for (service in allServices)
                     for (i = 0; i < allServices[service].length; i++) {
 
-                        qty = cart[`${service}${i}`];
+                        qty = cart.getItem(`${service}${i}`);
                         if (qty > 0) { //if there is a quantity entered in the textbox ...
                             extended_price = qty * allServices[service][i].price //equation for extended price
                             subtotal += extended_price; //adding extended price for each tour to the subtotal
@@ -135,7 +152,8 @@
                             <tr>
                                 <td align="center" width="43%"><font color="#000000">${allServices[service][i].tour}</font></td>
                                 <td align="center" width="11%"><font color="#000000"><center>${qty}</center></font>
-                                    <input type="button" value="+1" onclick="addItem(${qty})"><input type="button" value="-1" onclick="cart.removeItem(${qty})"></td>
+                                    <input type="button" value="+1" onclick="addItem('${service}',${i});">
+                                    <input type="button" value="-1" onclick="removeItem('${service}',${i});"></td>
                                 <td align="center" width="13%"><font color="#000000">\$${allServices[service][i].price}</font></td>
                                 <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
                                 
@@ -152,14 +170,16 @@
                     Code for clear all button taken from smashingmagazine.com
                 -->
                 <td align="center" colspan="4" width="100%"><input type="button" value="Clear All"
-                        onclick="cart.clear()" onkeyup="window.location.replace('./cart.html')">
+                        onclick="cart.clear(); window.location.reload();">
                 </td>
 
             </tr>
 
             <tr>
                 <!-- Sub-total row -->
-                <td style="text-align: center;" colspan="3" width="67%"><h3 style=color:tomato>Total</h3></td>
+                <td style="text-align: center;" colspan="3" width="67%">
+                    <h3 style=color:tomato>Total</h3>
+                </td>
 
                 <td align="center" width="54%"><strong style=color:tomato>$
                         <script>document.write(subtotal);</script></strong> <!-- input calculated subtotal amount -->
@@ -180,6 +200,7 @@
 <ul class="actions" align="center">
     <li>
         <input type="submit" value='Purchase' class="button big" name="purchase_submit_button" onclick="checkCart()">
+        <input type="submit" value='Continue Shopping' class="button big" onclick="GoBackWithRefresh()">
     </li>
 </ul>
 
