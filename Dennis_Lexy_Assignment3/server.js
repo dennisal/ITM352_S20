@@ -7,7 +7,7 @@ Lexy Dennis' Assignment 3 Server
 */
 
 var data = require('./public/services_data.js'); //load services_data.js file and set to variable 'data'
-var services_array = data.services_array; //set variable 'services_array' to the services_array in the services_data.js file
+var allServices = data.allServices; //set variable 'services_array' to the services_array in the services_data.js file
 const queryString = require('query-string'); //read variable 'queryString' as the loaded query-string module
 var express = require('express'); //load and cache express module
 var app = express(); //set module to variable 'app'
@@ -18,6 +18,8 @@ var userdata_file = fs.readFileSync(user_info_file, 'utf-8'); //open file user_d
 userdata = JSON.parse(userdata_file); //json parse will convert string into json object
 var cookieParser = require('cookie-parser'); //set var cookieParser as the cookie-parser module
 var session = require('express-session'); //session variable is set for session module
+app.use(myParser.urlencoded({ extended: true })); //get data in the body
+const nodemailer = require("nodemailer"); //nodemailer module
 
 app.use(cookieParser()); //use cookie-parser middleware
 
@@ -26,27 +28,167 @@ app.all('*', function (request, response, next) { //for all request methods...
     next(); //move on
 });
 
+app.post("/generateInvoice", function (request, response) {
+    console.log(request.body);
+    //create a string with the invoice then email it to user and send back to cart for displaying
+    //the following code was taken from nodemailer.com
+    // async..await is not allowed in global scope, must use a wrapper
+    async function main() {
+        // Generate test SMTP service account from ethereal.email
+        // Only needed if you don't have a real mail account for testing
+        let testAccount = await nodemailer.createTestAccount();
+
+        // create reusable transporter object using the default SMTP transport
+        let transporter = nodemailer.createTransport({
+            host: "smtp.ethereal.email",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: testAccount.user, // generated ethereal user
+                pass: testAccount.pass, // generated ethereal password
+            },
+        });
+
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+            from: '"Spanish Day Tours" <SpanishDayTours@example.com>', // sender address
+            to: "bar@example.com, cookie.email", // list of receivers
+            subject: "Invoice", // Subject line
+            text: "Thank you for your purchase! Travel with us again soon", // plain text body
+            // html body
+            html: str =`
+            <table>
+
+            <tbody>
+
+            <tr>
+                <!-- This row contains the column headers-->
+                <th style="text-align: center;" width="43%">
+                    <h3>Tour</h3>
+                </th>
+
+                <th style="text-align: center;" width="11%">
+                    <h3>quantity</h3>
+                </th>
+
+                <th style="text-align: center;" width="54%">
+                    <h3>price per unit</h3>
+                </th>
+
+                <th style="text-align: center;" width="13%">
+                    <h3>extended price</h3>
+                </th>
+
+            </tr>
+            `,
+                //get the information entered on the home page to input into the table
+                subtotal: 0, //subtotal starts off as 0
+                for (service, allServices) {
+                    for (i = 0; i < allServices[service].length; i++) {
+
+                        qty = cart.getItem(`${service}${i}`);
+                        if (qty > 0) { //if there is a quantity entered in the textbox ...
+                            extended_price = qty * allServices[service][i].price //equation for extended price
+                            subtotal += extended_price; //adding extended price for each tour to the subtotal
+
+                            str +=`
+
+                                <tr>
+                                    <td align="center" width="43%"><font color="#000000">${allServices[service][i].tour}</font></td>
+                                    <td align="center" width="11%"><font color="#000000">${qty}</font></td>
+                                    <td align="center" width="13%"><font color="#000000">\$${allServices[service][i].price}</font></td>
+                                    <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
+                                </tr>
+
+                            `;
+
+                        }
+
+                    }
+            
+                
+
+                // Compute tax
+                var tax_rate = 0.0575;
+                var tax = tax_rate * subtotal;
+
+                // Compute grand total
+                var total = subtotal + tax;
+
+        str += `
+
+            <tr>
+                <!-- Creates row of space -->
+                <td colspan="4" width="100%">&nbsp;</td>
+
+            </tr>
+
+            <tr>
+                <!-- Sub-total row -->
+                <td style="text-align: center;" colspan="3" width="67%"><b>SUB-TOTAL</b></td>
+
+                <td align="center" width="54%"><b>$
+                        ${subtotal}</b> <!-- input calculated subtotal amount -->
+                </td>
+
+            </tr>
+
+            <tr>
+                <!-- Tax row -->
+                <td style="text-align: center;" colspan="3" width="67%"><b><span>TAX @
+                            ${100 * tax_rate}%</span></b>
+                </td>
+
+                <td align="center" width="54%"><b>$
+                        ${tax.toFixed(2)}</b>
+                    <!-- Input calculated amount for tax, to two decimal places-->
+                </td>
+
+            </tr>
+
+            <tr>
+                <!-- Total row -->
+                <td style="text-align: center;" colspan="3" width="67%">
+                    <h3 style=color:tomato>Total</h3>
+                </td>
+
+                <td style="text-align: center;" width="54%"><strong style=color:tomato>$
+                        ${total.toFixed(2)}</strong>
+                    <!-- Input calculated total, to two decimal places -->
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>`,
+
+        console.log("Message sent: %s", info.messageId);
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+        // Preview only available when sending through an Ethereal account
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+},
+});
+};
+request.send(str);
+main().catch(console.error);
+});
+
+
+
 //The following was taken from stormpath.com and Lab15 ex4.js
 app.use(session({ //
     secret: 'eg[isfd-8yF9-7w2315df{}+Ijsli;;to8', //random string to encrypt session ID
     resave: true, //save session
     saveUninitialized: false, //forget session after user is done
-    httpOnly: true, //prevents browser js from accessing cookies
+    httpOnly: false, //allows browser js from accessing cookies
     secure: true, //ensures cookies are only used over HTTPS
     ephemeral: true // deletes cookie when browser is closed
 }));
 
-function saveTour(theTextbox) { //Function to save tour amount to cart
-    if (isNonNegInt(theTextbox.value) == false) { //if there are no errors...
-    quantity_form[`quantity_textbox${i}`].value = tourAmount; //make value entered tourAmount
-    session.user.tourAmount = tourAmount; //save this tour amount to this user's session
-    document.getElementById(`cart${i}`).innerHTML = 'Added to Cart!'; //let user know tour was added
-    } else {
-        document.getElementById(`cart${i}`).innerHTML = 'Cannot Add to Cart: Please Enter Valid Tour Amount'; //let user know to input actual amount
-    };
-};
 
-app.use(myParser.urlencoded({ extended: true })); //get data in the body
 
 app.post("/process_form", function (request, response) { //process the quantity_form when the POST request is initiated to form a response from the values in the form
     let POST = request.body; // data would be packaged in the body
@@ -216,10 +358,10 @@ app.post("/register_user", function (request, response) {
 });
 
 //The below code was taken from stormpath.com
-app.post('/logout', function(request, response) { //on logout...
+app.post('/logout', function (request, response) { //on logout...
     request.session.reset(); //reset session (clear it)
     response.redirect('/index.html'); //and redirect user to index page
-  });
+});
 
 app.use(express.static('./public')); // root in the 'public' directory so that express will serve up files from here
 app.listen(8080, () => console.log(`listening on port 8080`)); //run the server on port 8080 and write it in the console

@@ -14,7 +14,7 @@ var cart = sessionStorage; //sets 'cart' to the local session
     var quantities = []; //create empty variable 'quantities'
 
     if (cart.length == 0) { //if cart is not empty...
-        history.go(-1); // if there is nothing entered in any of the textboxes, send the user back to the page they were at previously to select tour amounts
+        window.location = './index.html'; // if there is nothing entered in any of the textboxes, send the user back to the page they were at previously to select tour amounts
         alert('Shopping Cart is Empty! Please Select Tour Amounts'); //notice to renter tour amounts
     };
 
@@ -45,6 +45,25 @@ var cart = sessionStorage; //sets 'cart' to the local session
             window.location.href = './invoice.html';
         }
     }
+
+    //taken from stackoverflow.com
+    (function deleteCookies() {
+    var cookies = document.cookie.split("; ");
+    for (var c = 0; c < cookies.length; c++) {
+        var d = window.location.hostname.split(".");
+        while (d.length > 0) {
+            var cookieBase = encodeURIComponent(cookies[c].split(";")[0].split("=")[0]) + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=' + d.join('.') + ' ;path=';
+            var p = location.pathname.split('/');
+            document.cookie = cookieBase + '/';
+            while (p.length > 0) {
+                document.cookie = cookieBase + p.join('/');
+                p.pop();
+            };
+            d.shift();
+        }
+    }
+})();
+
 </script>
 
 <!-- Copied from order_page_Ex4.html in Lab13 -->
@@ -111,26 +130,29 @@ var cart = sessionStorage; //sets 'cart' to the local session
             <script> //The script will get the information entered on the home page to input into the table
 
                 subtotal = 0; //subtotal starts off as 0
+                for (service in allServices) {
+                    for (i = 0; i < allServices[service].length; i++) {
 
-                for (i = 0; i < services_array.length; i++) {
+                        qty = cart.getItem(`${service}${i}`);
+                        if (qty > 0) { //if there is a quantity entered in the textbox ...
+                            extended_price = qty * allServices[service][i].price //equation for extended price
+                            subtotal += extended_price; //adding extended price for each tour to the subtotal
 
-                    if (quantities[i] > 0) { //if there is a quantity entered in the textbox ...
-                        extended_price = quantities[i] * services_array[i].price //equation for extended price
-                        subtotal += extended_price; //adding extended price for each tour to the subtotal
+                            document.write(`
 
-                        document.write(`
+                                <tr>
+                                    <td align="center" width="43%"><font color="#000000">${allServices[service][i].tour}</font></td>
+                                    <td align="center" width="11%"><font color="#000000">${qty}</font></td>
+                                    <td align="center" width="13%"><font color="#000000">\$${allServices[service][i].price}</font></td>
+                                    <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
+                                </tr>
 
-                            <tr>
-                                <td align="center" width="43%"><font color="#000000">${services_array[i].tour}</font></td>
-                                <td align="center" width="11%"><font color="#000000">${quantities[i]}</font></td>
-                                <td align="center" width="13%"><font color="#000000">\$${services_array[i].price}</font></td>
-                                <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
-                            </tr>
+                            `);
 
-                        `);
+                        }
 
                     }
-
+            
                 }
 
                 // Compute tax
@@ -177,7 +199,7 @@ var cart = sessionStorage; //sets 'cart' to the local session
                     <h3 style=color:tomato>Total</h3>
                 </td>
 
-                <td width="54%"><strong style=color:tomato>$
+                <td style="text-align: center;" width="54%"><strong style=color:tomato>$
                         <script>document.write(total.toFixed(2));</script></strong>
                     <!-- Input calculated total, to two decimal places -->
                 </td>
@@ -196,7 +218,7 @@ var cart = sessionStorage; //sets 'cart' to the local session
 -->
 <ul class="actions" align="center">
     <li>
-        <input type="submit" value='Logout' class="button big" name="logout">
+        <input type="submit" value='Logout' class="button big" name="logout" onclick="sessionStorage.clear(); deleteCookies(document.cookies); window.location = './index.html';">
     </li>
 </ul>
 

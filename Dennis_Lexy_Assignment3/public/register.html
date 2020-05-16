@@ -103,8 +103,11 @@
                     response.json().then(function (errors) { //then make the response 'errors' a json object
 
                         if (Object.keys(errors).length == 0) { //if no errors...
-                            document.cookie;
-
+                            sessionStorage.clear();
+                            document.cookie; //gives a cookie to user
+                            var theDate = JSON.stringify(Date()); //sets the time of login
+                            sessionStorage.setItem('last_login_time', JSON.parse(theDate)); //remember this login time in session
+                            response.json({}); //give response parsed as json object
                             response.redirect(GoBackWithRefresh()); //redirect to last-visited page
                         } else {
 

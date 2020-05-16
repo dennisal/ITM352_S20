@@ -71,7 +71,23 @@
             alert(`Please log in before viewing cart`);
             window.location.href = './login.html';
         } else {
-            window.location.href = './invoice.html';
+            fetch('/generateInvoice',
+                {
+                    headers: {'Content-Type':'application/json'},
+                    method: 'POST',
+                    body: JSON.stringify(cart)
+                }).then( //if generateInvoice worked
+                function (response) { //get response
+                    return response.text(); //return as invoice
+                }
+            ).then(
+                function (html) {
+                    document.write(html);
+                }
+            ).catch(function(err){
+                console.warn('error:', err);
+            }
+            );
         }
     }
 
@@ -139,7 +155,7 @@
             <script> //The script will get the information entered on the home page to input into the table
 
                 subtotal = 0; //subtotal starts off as 0
-                for (service in allServices)
+                for (service in allServices) {
                     for (i = 0; i < allServices[service].length; i++) {
 
                         qty = cart.getItem(`${service}${i}`);
@@ -161,6 +177,7 @@
                         `);
                         }
                     };
+                }
 
             </script>
 

@@ -19,6 +19,22 @@
     <!-- Linking the templated stylesheet to this html page -->
 
     <script> //Taken from order_page_Ex4.html
+        //function taken from w3 schools
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie); //decode the cookie
+            var ca = decodedCookie.split(';'); //split up string by ';'
+            for (var i = 0; i < ca.length; i++) { //split up by names
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        };
 
         function isNonNegInt(q, return_errors = false) { //function that identifies invalid numbers
             errors = []; // assume no errors at first
@@ -194,17 +210,43 @@
             <section id="cta" class="main special">
                 <!-- Section to submit purchase order -->
 
-                <h2>View Shopping Cart</h2>
-                <p>Please log in or register to view your shopping cart.<br></br>Already logged in?  View shopping cart <a href="cart.html" style="color: #666666; font-size: 1em; font-family: inherit;">here</a></p>
-                <br />
+                <h2>Checkout</h2>
+                <script>
+                    var theUser = getCookie('name'); //theUser is the cookie for user's name
+                    var theUsername = getCookie('username'); //sets variable for username in cookie
+                    var email = getCookie('email'); //sets variable 'email'
+                    if (theUsername != '') { //if there is not a name for user but there is a username...
+                        document.write(`
+                            <p>Logged in as: <font color="green">${theUsername}</font>.   Not you? Log in or register an account<p> 
+                            <p>Last log-in: <font color="green">${sessionStorage.last_login_time}</font></p>
+                        `)
+                    } else {
+                        document.write(`
+                            <p>Not logged in. Please log in <a href="login.html" style="color: #666666; font-size: 1em; font-family: inherit;">here</a></p>
+                        `)
+                    };
+                    var cart = sessionStorage.length - 1;
+                    if(cart > 0) {
+                        document.write(`
+                            <p>Shopping Cart has <font color="green">${cart}</font> tours</p>
+                        `)
+                    } else {
+                        document.write(`
+                            <p>Shopping cart is currently empty</p>
+                        `)
+                    };
+                </script>
                 <ul class="actions">
                     <li>
-                        <a href="login.html" class="button big" name="login_button">Log In</a>
+                        <a href="cart.html" class="button big" name="cart_button">Shopping Cart</a>
                         <!-- Purchase button will submit quantity_form to be processed if there are no errors in the textboxes -->
                     </li>
-
                     <li>
                         <a href="register.html" class="button big" name="register_button">Register</a>
+                        <!-- Purchase button will submit quantity_form to be processed if there are no errors in the textboxes -->
+                    </li>
+                    <li>
+                        <a href="login.html" class="button big" name="login_button">Log In</a>
                         <!-- Purchase button will submit quantity_form to be processed if there are no errors in the textboxes -->
                     </li>
                 </ul>
