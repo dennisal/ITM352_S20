@@ -100,11 +100,12 @@
                     response.json().then(function (errors) { //then make the response 'errors' a json object
 
                         if (Object.keys(errors).length == 0) { //if no errors...
-                            sessionStorage.clear();
-                            document.cookie; //gives a cookie to user
+                            sessionStorage.clear(); //reset session
                             var theDate = JSON.stringify(Date()); //sets the time of login
-                            setCookie('last_login_time', JSON.parse(theDate)); //remember this login time in session
-                            response.json({}); //give response parsed as json object
+                            var username = registration_form.username;
+                            var userEmail = registration_form.email;
+                            var user_name = registration_form.name;
+                            setCookie('last_login_time', JSON.parse(theDate),'username', username, 'email', userEmail, 'name', user_name); //remember this login time in session
                             response.redirect(GoBackWithRefresh()); //redirect to last-visited page
                         } else {
 

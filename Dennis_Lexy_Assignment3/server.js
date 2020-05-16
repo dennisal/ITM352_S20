@@ -32,12 +32,33 @@ app.all('*', function (request, response, next) { //for all request methods...
 app.post("/generateInvoice", function (request, response) {
     cart = JSON.parse(request.query['cartData']); //cart = parsed cartData
     cookie = JSON.parse(request.query['cookieData']); // cookie = parsed cookieData
-    const theCookie = cookie.split(';'); //divide cookie by ;
-    var theUser = theCookie[3].split('=').pop(); //Get the user's name from cookie string
-    var theUsername = theCookie[1].split('=').pop(); //sets variable for username in cookie
-    var email = theCookie[2].split('=').pop(); //sets variable 'email'
-    console.log(cart);
-    console.log(theCookie[0]);
+    var theCookie = cookie.split(';'); //divide cookie by ;
+    for (i in theCookie) {
+        //function taken from stackoverflow.com
+        function split(theCookie) { //split the cookie before the "="
+            var i = theCookie.indexOf("="); //everything before the '='
+
+            if (i > 0)
+                return theCookie.slice(0, i);//cut off the rest of the string after =
+            else {
+                return "";
+            }
+        };
+
+        var key = split(theCookie[i]); //key = string before '='
+
+        if (key == ' username') { //set theUsername = username value
+            var theUsername = theCookie[i].split('=').pop(); //sets variable for username in cookie
+        };
+
+        if (key == 'email') { //set email = email value
+            var email = theCookie[i].split('=').pop(); //sets variable 'email'
+        };
+
+    }
+    console.log(email);
+    console.log(theUsername);
+    console.log(theCookie);
 
     //create a string with the invoice then email it to user and send back to cart for displaying on the browser (the below code is copied from invoice.html)
 
@@ -46,7 +67,7 @@ app.post("/generateInvoice", function (request, response) {
     <!-- Center header on page -->
     <h1 style=color:tomato>Checkout</h1>
     <hr /> <!-- Title of page -->
-</header>
+    </header>
         <h3 align="center">Thank you for your purchase, <font color="green">${theUsername}!</font><br />An email has been sent to <font color="green">${email}</font></h3>
     
             <table>
@@ -253,7 +274,10 @@ app.post("/check_login", function (request, response) {// Process login form POS
         var theDate = Date.now(); //sets the time of login
         session.last_login_time = theDate; //remember this login time in session
         var login_name = user_info['name']; //set login_name to the name saved for user
-        response.cookie('username', login_username, 'name', login_name); //gives a cookie to user
+        var user_email = user_info['email']; //set email to the email saved for user
+        response.cookie('username', login_username) //gives username in cookie
+        response.cookie('name', login_name) //gives name in cookies
+        response.cookie('email', user_email); //gives a cookie to user
         response.json({}); //give response parsed as json object
     } else {
         response.json(errs); //otherwise, show error message

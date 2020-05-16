@@ -41,6 +41,18 @@
             var expires = "expires=" + d.toUTCString(); //put in string
             document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/"; //put into local cookie
         }
+        //function taken from stackoverflow.com
+        function deleteAllCookies() {
+            var cookies = document.cookie.split(";"); //divide cookies by keys and values with ;
+
+            for (var i = 0; i < cookies.length; i++) { //for each cookie...
+                var cookie = cookies[i];
+                var eqPos = cookie.indexOf("="); //eqPos = everything before '='
+                var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie; //set name to key
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT"; //cookie equal to name (key)
+            }
+        }
+
 
         //taken from stackoverflow.com
         function GoBackWithRefresh(event) { //function to go to previous page
@@ -74,12 +86,11 @@
                     response.json().then(function (errors) { //then make the response 'errors' a json object
 
                         if (Object.keys(errors).length == 0) { //if no errors..
-                            sessionStorage.clear();
-                            document.cookie; //gives a cookie to user
+                            sessionStorage.clear(); //clear session for new users
+                            response.json({}); //give response in parsed json object
                             var theDate = JSON.stringify(Date()); //sets the time of login
-                            setCookie('last_login_time', JSON.parse(theDate)); //remember this login time in cookie
-                            response.json({}); //give response parsed as json object
-
+                            setCookie('last_login_time', JSON.parse(theDate), 'username'); //remember this login time in cookie
+                            
                             response.redirect(GoBackWithRefresh()); //redirect to the last-visited page
                         } else {
 
