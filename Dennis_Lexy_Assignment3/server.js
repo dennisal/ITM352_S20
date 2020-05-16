@@ -33,9 +33,9 @@ app.post("/generateInvoice", function (request, response) {
     cart = JSON.parse(request.query['cartData']); //cart = parsed cartData
     cookie = JSON.parse(request.query['cookieData']); // cookie = parsed cookieData
     const theCookie = cookie.split(';'); //divide cookie by ;
-    var theUser = theCookie[2].split('=').pop(); //Get the user's name from cookie string
-    var theUsername = theCookie[0].split('=').pop(); //sets variable for username in cookie
-    var email = theCookie[1].split('=').pop(); //sets variable 'email'
+    var theUser = theCookie[3].split('=').pop(); //Get the user's name from cookie string
+    var theUsername = theCookie[1].split('=').pop(); //sets variable for username in cookie
+    var email = theCookie[2].split('=').pop(); //sets variable 'email'
     console.log(cart);
     console.log(theCookie[0]);
 

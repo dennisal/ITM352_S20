@@ -248,18 +248,19 @@
                 <script>
                     var theUser = getCookie('name'); //theUser is the cookie for user's name
                     var theUsername = getCookie('username'); //sets variable for username in cookie
-                    var last_login_time = getCookie('loginTime'); //sets variable 'email'
+                    var email = getCookie('email'); //sets variable 'email'
+                    var lastVisited = getCookie('last_login_time'); //set variable 'lastVisited'
                     if (theUsername != '') { //if there is not a name for user but there is a username...
                         document.write(`
                             <p>Logged in as: <font color="green">${theUsername}</font>.   Not you? Log in or register an account<p> 
-                            <p>Last log-in: <font color="green">${sessionStorage.last_login_time}</font></p>
+                            <p>Last log-in: <font color="green">${lastVisited}</font></p>
                         `)
                     } else {
                         document.write(`
                             <p>Not logged in. Please log in <a href="login.html" style="color: #666666; font-size: 1em; font-family: inherit;">here</a></p>
                         `)
                     };
-                    var cart = sessionStorage.length - 1;
+                    var cart = sessionStorage.length;
                     if (cart > 0) {
                         document.write(`
                             <p>Shopping Cart has <font color="green">${cart}</font> tours</p>

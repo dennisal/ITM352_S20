@@ -48,15 +48,12 @@
     </form>
 
     <script>
-        //the following is taken from stackoverflow.com
-        function setCookie(name, value, days) {
-            var expires = "";
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        //this function was taken from w3schools.com
+        function setCookie(cname, cvalue, exdays) { //set cookie with name, value, and expiration
+            var d = new Date(); //today's date
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000)); //expiration is one day after login
+            var expires = "expires=" + d.toUTCString(); //put in string
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/"; //put into local cookie
         }
         function getCookie(name) {
             var nameEQ = name + "=";
@@ -106,7 +103,7 @@
                             sessionStorage.clear();
                             document.cookie; //gives a cookie to user
                             var theDate = JSON.stringify(Date()); //sets the time of login
-                            sessionStorage.setItem('last_login_time', JSON.parse(theDate)); //remember this login time in session
+                            setCookie('last_login_time', JSON.parse(theDate)); //remember this login time in session
                             response.json({}); //give response parsed as json object
                             response.redirect(GoBackWithRefresh()); //redirect to last-visited page
                         } else {
