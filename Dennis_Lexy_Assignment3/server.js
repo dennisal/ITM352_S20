@@ -28,18 +28,18 @@ app.all('*', function (request, response, next) { //for all request methods...
     next(); //move on
 });
 
+//this will be used by the fetch in cart.html to send data to server, server will generate invoice and send email to user, then the invoice will ge displayed in the page 
 app.post("/generateInvoice", function (request, response) {
-    console.log(request.query);
-    cart = JSON.parse(request.query['cartData']);
-    cookie = JSON.parse(request.query['cookieData']);
-    const theCookie = cookie.split(';');
-    var theUser = theCookie[1].split('=').pop(); //Get the user's name from cookie string
-    var theUsername = theCookie[2].split('=').pop(); //sets variable for username in cookie
-    var email = theCookie[0].split('=').pop(); //sets variable 'email'
+    cart = JSON.parse(request.query['cartData']); //cart = parsed cartData
+    cookie = JSON.parse(request.query['cookieData']); // cookie = parsed cookieData
+    const theCookie = cookie.split(';'); //divide cookie by ;
+    var theUser = theCookie[2].split('=').pop(); //Get the user's name from cookie string
+    var theUsername = theCookie[0].split('=').pop(); //sets variable for username in cookie
+    var email = theCookie[1].split('=').pop(); //sets variable 'email'
     console.log(cart);
     console.log(theCookie[0]);
 
-    //create a string with the invoice then email it to user and send back to cart for displaying
+    //create a string with the invoice then email it to user and send back to cart for displaying on the browser (the below code is copied from invoice.html)
 
     str = `<link href="./assets/css/main.css" rel="stylesheet"> <!-- Link CSS stylesheet -->
     <header align="center">
@@ -47,7 +47,7 @@ app.post("/generateInvoice", function (request, response) {
     <h1 style=color:tomato>Checkout</h1>
     <hr /> <!-- Title of page -->
 </header>
-        <h3 align="center">Thank you for your purchase ${theUsername}!<br />An email has been sent to ${email}</h3>
+        <h3 align="center">Thank you for your purchase, <font color="green">${theUsername}!</font><br />An email has been sent to <font color="green">${email}</font></h3>
     
             <table>
 
@@ -84,15 +84,14 @@ app.post("/generateInvoice", function (request, response) {
                 subtotal += extended_price; //adding extended price for each tour to the subtotal
 
                 str += `
+                    <tr>
+                        <td align="center" width="43%"><font color="#000000">${allServices[service][i].tour}</font></td>
+                        <td align="center" width="11%"><font color="#000000">${qty}</font></td>
+                        <td align="center" width="13%"><font color="#000000">\$${allServices[service][i].price}</font></td>
+                        <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
+                    </tr>
 
-                                <tr>
-                                    <td align="center" width="43%"><font color="#000000">${allServices[service][i].tour}</font></td>
-                                    <td align="center" width="11%"><font color="#000000">${qty}</font></td>
-                                    <td align="center" width="13%"><font color="#000000">\$${allServices[service][i].price}</font></td>
-                                    <td align="center" width="54%"><font color="#000000">\$${extended_price}</font></td>
-                                </tr>
-
-                            `;
+                `;
 
             }
 
@@ -155,32 +154,27 @@ app.post("/generateInvoice", function (request, response) {
 
     </table>`;
 
-
-
-    var transporter = nodemailer.createTransport({
-        service: 'mail.hawaii.edu',
+    //this code was taken from nodemailer.com
+    var transporter = nodemailer.createTransport({ //create the transporter variable
+        service: 'mail.hawaii.edu', //use hawaii.edu
     });
-    var email = theCookie[0].split('=').pop();
     var mailOptions = {
-        from: 'SpanishDayTours@gmail.com',
-        to: email,
+        from: 'SpanishDayTours@gmail.com', //sender is SpanishDayTours@gmail.com
+        to: email, //email from the cookie from cart.html fetch
         subject: 'Invoice',
-        html: str
+        html: str //the above string will return as html in the body of the email
     };
-    console.log(email);
 
     transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
+        if (error) { //notify me in the consol if there are errors
             console.log(error);
-        } else {
+        } else { //notify me if the email sent properly
             console.log('Email sent: ' + info.response);
         }
     });
 
-    response.send(str);
+    response.send(str); // string goes to be displayed in browser
 });
-
-
 
 //The following was taken from stormpath.com and Lab15 ex4.js
 app.use(session({ //
@@ -191,8 +185,6 @@ app.use(session({ //
     secure: true, //ensures cookies are only used over HTTPS
     ephemeral: true // deletes cookie when browser is closed
 }));
-
-
 
 app.post("/process_form", function (request, response) { //process the quantity_form when the POST request is initiated to form a response from the values in the form
     let POST = request.body; // data would be packaged in the body
