@@ -29,34 +29,26 @@ app.all('*', function (request, response, next) { //for all request methods...
 });
 
 app.post("/generateInvoice", function (request, response) {
-    console.log(request.body);
+    console.log(request.query);
+    cart = JSON.parse(request.query['cartData']);
+    cookie = JSON.parse(request.query['cookieData']);
+    const theCookie = cookie.split(';');
+    var theUser = theCookie[1].split('=').pop(); //Get the user's name from cookie string
+    var theUsername = theCookie[2].split('=').pop(); //sets variable for username in cookie
+    var email = theCookie[0].split('=').pop(); //sets variable 'email'
+    console.log(cart);
+    console.log(theCookie[0]);
+
     //create a string with the invoice then email it to user and send back to cart for displaying
-    //the following code was taken from nodemailer.com
-    // async..await is not allowed in global scope, must use a wrapper
-    async function main() {
-        // Generate test SMTP service account from ethereal.email
-        // Only needed if you don't have a real mail account for testing
-        let testAccount = await nodemailer.createTestAccount();
 
-        // create reusable transporter object using the default SMTP transport
-        let transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            secure: false, // true for 465, false for other ports
-            auth: {
-                user: testAccount.user, // generated ethereal user
-                pass: testAccount.pass, // generated ethereal password
-            },
-        });
-
-        // send mail with defined transport object
-        let info = await transporter.sendMail({
-            from: '"Spanish Day Tours" <SpanishDayTours@example.com>', // sender address
-            to: "bar@example.com, cookie.email", // list of receivers
-            subject: "Invoice", // Subject line
-            text: "Thank you for your purchase! Travel with us again soon", // plain text body
-            // html body
-            html: str =`
+    str = `<link href="./assets/css/main.css" rel="stylesheet"> <!-- Link CSS stylesheet -->
+    <header align="center">
+    <!-- Center header on page -->
+    <h1 style=color:tomato>Checkout</h1>
+    <hr /> <!-- Title of page -->
+</header>
+        <h3 align="center">Thank you for your purchase ${theUsername}!<br />An email has been sent to ${email}</h3>
+    
             <table>
 
             <tbody>
@@ -80,18 +72,18 @@ app.post("/generateInvoice", function (request, response) {
                 </th>
 
             </tr>
-            `,
-                //get the information entered on the home page to input into the table
-                subtotal: 0, //subtotal starts off as 0
-                for (service, allServices) {
-                    for (i = 0; i < allServices[service].length; i++) {
+            `;
+    //get the information entered on the home page to input into the table
+    subtotal = 0; //subtotal starts off as 0
+    for (service in allServices) {
+        for (i = 0; i < allServices[service].length; i++) {
 
-                        qty = cart.getItem(`${service}${i}`);
-                        if (qty > 0) { //if there is a quantity entered in the textbox ...
-                            extended_price = qty * allServices[service][i].price //equation for extended price
-                            subtotal += extended_price; //adding extended price for each tour to the subtotal
+            qty = cart[`${service}${i}`];
+            if (qty > 0) { //if there is a quantity entered in the textbox ...
+                extended_price = qty * allServices[service][i].price //equation for extended price
+                subtotal += extended_price; //adding extended price for each tour to the subtotal
 
-                            str +=`
+                str += `
 
                                 <tr>
                                     <td align="center" width="43%"><font color="#000000">${allServices[service][i].tour}</font></td>
@@ -102,20 +94,20 @@ app.post("/generateInvoice", function (request, response) {
 
                             `;
 
-                        }
+            }
 
-                    }
-            
-                
+        }
 
-                // Compute tax
-                var tax_rate = 0.0575;
-                var tax = tax_rate * subtotal;
+    }
 
-                // Compute grand total
-                var total = subtotal + tax;
+    // Compute tax
+    var tax_rate = 0.0575;
+    var tax = tax_rate * subtotal;
 
-        str += `
+    // Compute grand total
+    var total = subtotal + tax;
+
+    str += `
 
             <tr>
                 <!-- Creates row of space -->
@@ -161,19 +153,31 @@ app.post("/generateInvoice", function (request, response) {
 
         </tbody>
 
-    </table>`,
+    </table>`;
 
-        console.log("Message sent: %s", info.messageId);
-        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
-        // Preview only available when sending through an Ethereal account
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-},
-});
-};
-request.send(str);
-main().catch(console.error);
+
+    var transporter = nodemailer.createTransport({
+        service: 'mail.hawaii.edu',
+    });
+    var email = theCookie[0].split('=').pop();
+    var mailOptions = {
+        from: 'SpanishDayTours@gmail.com',
+        to: email,
+        subject: 'Invoice',
+        html: str
+    };
+    console.log(email);
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+
+    response.send(str);
 });
 
 

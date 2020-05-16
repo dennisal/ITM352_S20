@@ -10,7 +10,7 @@
 
 <script>
 
-var cart = sessionStorage; //sets 'cart' to the local session
+    var cart = sessionStorage; //sets 'cart' to the local session
     var quantities = []; //create empty variable 'quantities'
 
     if (cart.length == 0) { //if cart is not empty...
@@ -48,21 +48,21 @@ var cart = sessionStorage; //sets 'cart' to the local session
 
     //taken from stackoverflow.com
     (function deleteCookies() {
-    var cookies = document.cookie.split("; ");
-    for (var c = 0; c < cookies.length; c++) {
-        var d = window.location.hostname.split(".");
-        while (d.length > 0) {
-            var cookieBase = encodeURIComponent(cookies[c].split(";")[0].split("=")[0]) + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=' + d.join('.') + ' ;path=';
-            var p = location.pathname.split('/');
-            document.cookie = cookieBase + '/';
-            while (p.length > 0) {
-                document.cookie = cookieBase + p.join('/');
-                p.pop();
-            };
-            d.shift();
+        var cookies = document.cookie.split("; ");
+        for (var c = 0; c < cookies.length; c++) {
+            var d = window.location.hostname.split(".");
+            while (d.length > 0) {
+                var cookieBase = encodeURIComponent(cookies[c].split(";")[0].split("=")[0]) + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=' + d.join('.') + ' ;path=';
+                var p = location.pathname.split('/');
+                document.cookie = cookieBase + '/';
+                while (p.length > 0) {
+                    document.cookie = cookieBase + p.join('/');
+                    p.pop();
+                };
+                d.shift();
+            }
         }
-    }
-})();
+    })();
 
 </script>
 
@@ -91,11 +91,11 @@ var cart = sessionStorage; //sets 'cart' to the local session
         var email = getCookie('email'); //sets variable 'email'
         if (theUser == '' && theUsername != '') { //if there is not a name for user but there is a username...
             document.write(`
-                <h3 align="center">Thank you for your purchase, ${theUsername}!<br />An email has been sent to ${email}</h3>
+                <h3 align="center">Thank you for your purchase, <b>${theUsername}</b>!<br />An email has been sent to <b>${email}</b></h3>
             `)
         } else if (theUser != '') {
             document.write(`
-                <h3 align="center">Thank you for your purchase, ${theUser}!<br />An email has been sent to ${email}</h3>
+                <h3 align="center">Thank you for your purchase, <b>${theUser}</b>!<br />An email has been sent to <b>${email}</b></h3>
             `)
         };
 
@@ -152,7 +152,7 @@ var cart = sessionStorage; //sets 'cart' to the local session
                         }
 
                     }
-            
+
                 }
 
                 // Compute tax
@@ -218,7 +218,8 @@ var cart = sessionStorage; //sets 'cart' to the local session
 -->
 <ul class="actions" align="center">
     <li>
-        <input type="submit" value='Logout' class="button big" name="logout" onclick="sessionStorage.clear(); deleteCookies(document.cookies); window.location = './index.html';">
+        <input type="submit" value='Logout' class="button big" name="logout"
+            onclick="sessionStorage.clear(); deleteCookies(document.cookies); window.location = './index.html';">
     </li>
 </ul>
 

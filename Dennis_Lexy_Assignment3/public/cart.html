@@ -71,23 +71,14 @@
             alert(`Please log in before viewing cart`);
             window.location.href = './login.html';
         } else {
-            fetch('/generateInvoice',
-                {
-                    headers: {'Content-Type':'application/json'},
-                    method: 'POST',
-                    body: JSON.stringify(cart)
-                }).then( //if generateInvoice worked
-                function (response) { //get response
-                    return response.text(); //return as invoice
-                }
-            ).then(
-                function (html) {
-                    document.write(html);
-                }
-            ).catch(function(err){
-                console.warn('error:', err);
-            }
-            );
+            fetch("/generateInvoice?cartData="+JSON.stringify(cart)+"&cookieData="+JSON.stringify(document.cookie), 
+            {
+                method: "POST"
+            }).then(function (res) {
+                return res.text();
+            }).then(function (data) {
+                document.write(data);
+            }) 
         }
     }
 
@@ -117,7 +108,7 @@
         var theUsername = getCookie('username'); //sets variable for username in cookie
         if (theUsername != '') { //if there is not a name for user but there is a username...
             document.write(`
-                <h3 align="center">Hello, ${theUsername}! Please review your shopping cart order below</h3>
+                <h3 align="center">Hello, <font color="green">${theUsername}</font>! Please review your shopping cart order below</h3>
                 <h6 align="center">Not ${theUsername}? Please log in <a href="login.html" >here</a></h6><br />
             `)
         } else { //if not a cookie for user, prompt to log in
